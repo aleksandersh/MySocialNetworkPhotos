@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment
 
 class HolderFragment : Fragment() {
 
-    val viewModelStore = ViewModelStore()
+    val presenterStore = PresenterStore()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,6 +15,6 @@ class HolderFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModelStore.clear()
+        presenterStore.clear()
     }
 }

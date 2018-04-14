@@ -1,6 +1,6 @@
 package io.github.aleksandersh.simplemvp
 
-interface ViewModel {
+interface Presenter {
 
     fun onDestroy()
 }

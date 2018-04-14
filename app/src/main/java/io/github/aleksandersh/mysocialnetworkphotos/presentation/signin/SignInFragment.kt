@@ -10,7 +10,7 @@ import android.view.inputmethod.EditorInfo
 import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isDisplayed
-import io.github.aleksandersh.simplemvp.ViewModelProvider
+import io.github.aleksandersh.simplemvp.PresenterProvider
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
 class SignInFragment : Fragment(), SignInView {
@@ -43,7 +43,7 @@ class SignInFragment : Fragment(), SignInView {
         }
 
         val viewModel: SignInViewModel =
-            ViewModelProvider().getViewModel(this, "1", SignInViewModelFactory())
+            PresenterProvider().provide(this, "1", SignInPresenterFactory())
     }
 
     override fun showLoading(loading: Boolean) {

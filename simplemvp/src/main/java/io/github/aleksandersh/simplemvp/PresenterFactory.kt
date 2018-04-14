@@ -1,6 +1,6 @@
 package io.github.aleksandersh.simplemvp
 
-interface ViewModelFactory<out T : ViewModel> {
+interface PresenterFactory<out T : Presenter> {
 
     fun create(): T
 }

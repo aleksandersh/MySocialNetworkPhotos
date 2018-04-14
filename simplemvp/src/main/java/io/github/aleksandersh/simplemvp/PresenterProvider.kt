@@ -4,33 +4,33 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 
-class ViewModelProvider {
+class PresenterProvider {
 
     companion object {
 
-        private const val HOLDER_FRAGMENT_TAG = "view_model_holder_fragment"
+        private const val HOLDER_FRAGMENT_TAG = "simplemvp_holder_fragment"
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : ViewModel> getViewModel(
+    fun <T : Presenter> provide(
         fragment: Fragment,
         key: String,
-        factory: ViewModelFactory<T>
+        factory: PresenterFactory<T>
     ): T {
         return getHolderFragment(fragment)
-            .viewModelStore
-            .let { getViewModel(it, key, factory) } as T
+            .presenterStore
+            .let { provide(it, key, factory) } as T
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : ViewModel> getViewModel(
+    fun <T : Presenter> provide(
         activity: FragmentActivity,
         key: String,
-        factory: ViewModelFactory<T>
+        factory: PresenterFactory<T>
     ): T {
         return getHolderFragment(activity)
-            .viewModelStore
-            .let { getViewModel(it, key, factory) } as T
+            .presenterStore
+            .let { provide(it, key, factory) } as T
     }
 
     private fun getHolderFragment(activity: FragmentActivity): HolderFragment {
@@ -66,18 +66,18 @@ class ViewModelProvider {
         return holderFragment
     }
 
-    private fun getViewModel(
-        holderFragment: ViewModelStore,
+    private fun provide(
+        holderFragment: PresenterStore,
         key: String,
-        factory: ViewModelFactory<*>
-    ): ViewModel {
-        val viewModel = holderFragment.get(key)
-        if (viewModel != null) {
-            return viewModel
+        factory: PresenterFactory<*>
+    ): Presenter {
+        val presenter = holderFragment.get(key)
+        if (presenter != null) {
+            return presenter
         }
 
-        val newViewModel = factory.create()
-        holderFragment.put(key, newViewModel)
-        return newViewModel
+        val newPresenter = factory.create()
+        holderFragment.put(key, newPresenter)
+        return newPresenter
     }
 }
