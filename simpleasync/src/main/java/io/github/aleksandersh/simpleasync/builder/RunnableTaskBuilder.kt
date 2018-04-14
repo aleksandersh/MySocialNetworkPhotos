@@ -13,22 +13,30 @@ class RunnableTaskBuilder<T>(
     private val operation: Operation<T, Unit>
 ) : BaseTaskBuilder(asyncTask) {
 
-    fun <T> thenCall(
-        scheduler: Scheduler = Schedulers.currentThread,
-        callable: () -> T
-    ): CallableTaskBuilder<Unit, T> {
-        val nextOperation = CallableOperation<Unit, T>(callable, scheduler)
-        operation.setNext(nextOperation)
-        return CallableTaskBuilder(asyncTask, nextOperation)
+    fun thenRun(runnable: () -> Unit): RunnableTaskBuilder<Unit> {
+        return thenRun(Schedulers.currentThread, runnable)
     }
 
     fun thenRun(
-        scheduler: Scheduler = Schedulers.currentThread,
+        scheduler: Scheduler,
         runnable: () -> Unit
     ): RunnableTaskBuilder<Unit> {
         val nextOperation = RunnableOperation<Unit>(runnable, scheduler)
         operation.setNext(nextOperation)
         return RunnableTaskBuilder(asyncTask, nextOperation)
+    }
+
+    fun <T> thenCall(callable: () -> T): CallableTaskBuilder<Unit, T> {
+        return thenCall(Schedulers.currentThread, callable)
+    }
+
+    fun <T> thenCall(
+        scheduler: Scheduler,
+        callable: () -> T
+    ): CallableTaskBuilder<Unit, T> {
+        val nextOperation = CallableOperation<Unit, T>(callable, scheduler)
+        operation.setNext(nextOperation)
+        return CallableTaskBuilder(asyncTask, nextOperation)
     }
 
     fun handleError(runnable: (Throwable) -> Unit): RunnableTaskBuilder<Unit> {

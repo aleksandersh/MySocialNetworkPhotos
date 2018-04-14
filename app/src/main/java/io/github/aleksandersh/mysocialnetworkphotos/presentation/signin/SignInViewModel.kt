@@ -3,20 +3,24 @@ package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
 import io.github.aleksandersh.domain.AuthorizationInteractor
 import io.github.aleksandersh.simpleasync.AsyncTask
 import io.github.aleksandersh.simpleasync.Schedulers
+import io.github.aleksandersh.simpleasync.TaskSession
 import io.github.aleksandersh.simplemvp.Presenter
 
 class SignInViewModel(
     private val authorizationInteractor: AuthorizationInteractor
 ) : Presenter {
 
+    private var authorizationTask: TaskSession? = null
+
     override fun onDestroy() {
+        authorizationTask?.cancel()
     }
 
     fun onClickLogIn(loginInput: CharSequence, passwordInput: CharSequence) {
         val login = loginInput.toString()
         val password = passwordInput.toString()
         if (checkCredentials(login, password)) {
-            AsyncTask
+            authorizationTask = AsyncTask
                 .firstRun(Schedulers.backgroundScheduler) {
                     authorizationInteractor.login(login, password)
                 }
