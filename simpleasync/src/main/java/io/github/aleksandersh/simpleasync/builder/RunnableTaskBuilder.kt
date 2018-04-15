@@ -2,10 +2,7 @@ package io.github.aleksandersh.simpleasync.builder
 
 import io.github.aleksandersh.simpleasync.AsyncTask
 import io.github.aleksandersh.simpleasync.Schedulers
-import io.github.aleksandersh.simpleasync.operation.CallableOperation
-import io.github.aleksandersh.simpleasync.operation.HandleErrorOperation
-import io.github.aleksandersh.simpleasync.operation.Operation
-import io.github.aleksandersh.simpleasync.operation.RunnableOperation
+import io.github.aleksandersh.simpleasync.operation.*
 import io.github.aleksandersh.simpleasync.scheduler.Scheduler
 
 class RunnableTaskBuilder<T>(
@@ -50,5 +47,18 @@ class RunnableTaskBuilder<T>(
         val nextOperation = HandleErrorOperation<Unit>(runnable, scheduler)
         operation.setNext(nextOperation)
         return RunnableTaskBuilder(asyncTask, nextOperation)
+    }
+
+    fun anywayRun(runnable: () -> Unit): CallableTaskBuilder<Unit, Unit> {
+        return anywayRun(Schedulers.currentThread, runnable)
+    }
+
+    fun anywayRun(
+        scheduler: Scheduler,
+        runnable: () -> Unit
+    ): CallableTaskBuilder<Unit, Unit> {
+        val nextOperation = AnywayRunnableOperation<Unit>(runnable, scheduler)
+        operation.setNext(nextOperation)
+        return CallableTaskBuilder(asyncTask, nextOperation)
     }
 }

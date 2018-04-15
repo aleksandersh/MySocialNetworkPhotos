@@ -62,4 +62,17 @@ class CallableTaskBuilder<P, R>(
         operation.setNext(nextOperation)
         return CallableTaskBuilder(asyncTask, nextOperation)
     }
+
+    fun anywayRun(runnable: () -> Unit): CallableTaskBuilder<R, R> {
+        return anywayRun(Schedulers.currentThread, runnable)
+    }
+
+    fun anywayRun(
+        scheduler: Scheduler,
+        runnable: () -> Unit
+    ): CallableTaskBuilder<R, R> {
+        val nextOperation = AnywayRunnableOperation<R>(runnable, scheduler)
+        operation.setNext(nextOperation)
+        return CallableTaskBuilder(asyncTask, nextOperation)
+    }
 }
