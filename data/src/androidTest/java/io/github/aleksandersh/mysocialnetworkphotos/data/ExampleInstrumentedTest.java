@@ -1,4 +1,4 @@
-package io.github.aleksandersh.data;
+package io.github.aleksandersh.mysocialnetworkphotos.data;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("io.github.aleksandersh.data.test", appContext.getPackageName());
+        assertEquals("io.github.aleksandersh.mysocialnetworkphotos.data.test", appContext.getPackageName());
     }
 }

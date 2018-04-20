@@ -5,5 +5,10 @@ package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
  */
 interface SignInView {
 
+    companion object {
+
+        const val TAG = "SignInFragment"
+    }
+
     fun showLoading(loading: Boolean)
 }
