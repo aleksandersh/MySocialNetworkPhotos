@@ -1,5 +1,6 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -7,23 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import io.github.aleksandersh.domain.AuthorizationInteractor
 import io.github.aleksandersh.mysocialnetworkphotos.R
-import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
-import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProviderImpl
+import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.content.ContentActivity
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isDisplayed
-import io.github.aleksandersh.simplemvp.PresenterProvider
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
 class SignInFragment : Fragment(), SignInView {
 
-    companion object {
-
-        private const val TAG = "SignInFragment"
-    }
-
-    private lateinit var presenterProvider: PresenterProvider
-    private lateinit var presenterFactory: SignInPresenterFactory
     private lateinit var presenter: SignInPresenter
     private lateinit var viewState: SignInViewState
 
@@ -32,13 +24,13 @@ class SignInFragment : Fragment(), SignInView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        presenterProvider = PresenterProvider()
-        presenterFactory = SignInPresenterFactory(
-            ResourceManager(requireContext()),
-            SchedulersProviderImpl(),
-            AuthorizationInteractor()
-        )
-        presenter = presenterProvider.provide(this, TAG, presenterFactory)
+        val appComponent = Tree.applicationComponent.provide(SignInView.TAG)
+        val authComponent = Tree.applicationComponent.authorizationComponent.provide(SignInView.TAG)
+
+        val presenterProvider = appComponent.presenterProvider
+        val presenterFactory = authComponent.signInPresenterFactory
+
+        presenter = presenterProvider.provide(this, SignInView.TAG, presenterFactory)
         viewState = presenter.viewState
 
         return inflater.inflate(R.layout.fragment_sign_in, container, false)
@@ -78,6 +70,10 @@ class SignInFragment : Fragment(), SignInView {
     }
 
     private fun showContentActivity(show: Boolean) {
+        if (show) {
+            val newIntent = Intent(requireContext(), ContentActivity::class.java)
+            startActivity(newIntent)
+        }
     }
 
     private fun showProgress(show: Boolean) {

@@ -1,6 +1,7 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
 
-import io.github.aleksandersh.domain.AuthorizationInteractor
+import io.github.aleksandersh.domain.usecase.AuthorizationInteractor
+import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
 import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProvider
 import io.github.aleksandersh.simpleasync.AsyncTask
@@ -19,6 +20,7 @@ class SignInPresenter(
 
     override fun onDestroy() {
         authorizationTask?.cancel()
+        Tree.applicationComponent.authorizationComponent.release(SignInView.TAG)
     }
 
     fun onClickLogIn(loginInput: CharSequence, passwordInput: CharSequence) {

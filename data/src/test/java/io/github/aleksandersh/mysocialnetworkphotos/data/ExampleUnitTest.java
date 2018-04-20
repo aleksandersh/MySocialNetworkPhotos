@@ -1,4 +1,4 @@
-package io.github.aleksandersh.data;
+package io.github.aleksandersh.mysocialnetworkphotos.data;
 
 import org.junit.Test;
 

@@ -22,7 +22,9 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
+    implementation project(':domain')
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
     testImplementation "junit:junit:$versions.junit"
 }
