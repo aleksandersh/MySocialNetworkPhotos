@@ -3,6 +3,9 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+
+    def apiProperties = loadPropertiesFromFile('projectProperties/api.properties')
 
     defaultConfig {
         minSdkVersion 16
@@ -11,13 +14,27 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "API_AUTH_HOST", apiProperties['auth_host'])
+        buildConfigField("String", "API_CONTENT_HOST", apiProperties['content_host'])
+        buildConfigField("String", "API_CLIENT_ID", apiProperties['client_id'])
+        buildConfigField("String", "API_VERSION", apiProperties['api_version'])
     }
 
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
+        }
+
+        release {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -27,4 +44,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
     testImplementation "junit:junit:$versions.junit"
+}
+
+def loadPropertiesFromFile(String path) {
+    def propertiesFile = rootProject.file(path)
+    def properties = new Properties()
+    properties.load(propertiesFile.newReader())
+    return properties
 }

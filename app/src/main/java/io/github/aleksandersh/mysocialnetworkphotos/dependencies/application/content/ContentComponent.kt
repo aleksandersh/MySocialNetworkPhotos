@@ -1,0 +1,5 @@
+package io.github.aleksandersh.mysocialnetworkphotos.dependencies.application.content
+
+import io.github.aleksandersh.mysocialnetworkphotos.dependencies.application.ApplicationComponent
+
+class ContentComponent(val applicationComponent: ApplicationComponent)

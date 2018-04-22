@@ -1,7 +1,10 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
 
-import io.github.aleksandersh.domain.usecase.AuthorizationInteractor
+import android.webkit.WebResourceError
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
+import io.github.aleksandersh.mysocialnetworkphotos.domain.model.AuthorizationAction
+import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.AuthorizationInteractor
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.ZeroScreenData
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
 import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProvider
 import io.github.aleksandersh.simpleasync.AsyncTask
@@ -18,44 +21,41 @@ class SignInPresenter(
 
     private var authorizationTask: TaskSession? = null
 
+    init {
+        viewState.loadUrl.set(authorizationInteractor.getAuthorizationQuery())
+    }
+
     override fun onDestroy() {
         authorizationTask?.cancel()
         Tree.applicationComponent.authorizationComponent.release(SignInView.TAG)
     }
 
-    fun onClickLogIn(loginInput: CharSequence, passwordInput: CharSequence) {
-        val login = loginInput.toString()
-        val password = passwordInput.toString()
-        if (checkCredentials(login, password)) {
-            showProgress()
-            authorizationTask = AsyncTask
-                .firstRun(schedulersProvider.backgroundThread) {
-                    authorizationInteractor.logIn(login, password)
-                }
-                .anywayRun(schedulersProvider.mainThread, ::hideProgress)
-                .thenRun(::onAuthorizationSuccess)
-                .handleError(::onAuthorizationError)
+    fun onUrlLoading(url: String): Boolean {
+        val handle = authorizationInteractor.checkHandling(url)
+        if (handle) {
+            authorizationTask = AsyncTask.firstCall(schedulersProvider.backgroundThread) {
+                authorizationInteractor.processUrl(url)
+            }
+                .thenProcess(schedulersProvider.mainThread, ::onUrlProcessed)
                 .start()
         }
+
+        return handle
     }
 
-    private fun onAuthorizationSuccess() {
-        viewState.complete.set(true)
+    fun onReceivedError(error: WebResourceError) {
+        viewState.zeroScreenData.set(ZeroScreenData("Oops!", "Error")) // TODO
+        viewState.zeroScreenShowed.set(true)
     }
 
-    private fun onAuthorizationError(error: Throwable) {
-        viewState.error.set("Error")
-    }
-
-    private fun showProgress() {
-        viewState.progress.set(true)
-    }
-
-    private fun hideProgress() {
-        viewState.progress.set(false)
-    }
-
-    private fun checkCredentials(login: String, password: String): Boolean {
-        return login.isNotBlank() && password.isNotBlank()
+    private fun onUrlProcessed(action: AuthorizationAction) {
+        when (action) {
+            AuthorizationAction.AUTHORIZED -> {
+                viewState.complete.set(true)
+            }
+            AuthorizationAction.CANCEL -> {
+                viewState.cancel.set(true)
+            }
+        }
     }
 }
