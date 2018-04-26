@@ -19,10 +19,12 @@ class SignInPresenter(
 
     val viewState = SignInViewState()
 
+    private val startPageQuery: String = authorizationInteractor.getAuthorizationQuery()
+
     private var authorizationTask: TaskSession? = null
 
     init {
-        viewState.loadUrl.set(authorizationInteractor.getAuthorizationQuery())
+        viewState.loadUrl.set(startPageQuery)
     }
 
     override fun onDestroy() {
@@ -43,12 +45,23 @@ class SignInPresenter(
         return handle
     }
 
+    fun onClickRetry() {
+        viewState.loadUrl.set(startPageQuery)
+    }
+
     fun onReceivedError(error: WebResourceError) {
-        viewState.zeroScreenData.set(ZeroScreenData("Oops!", "Error")) // TODO
-        viewState.zeroScreenShowed.set(true)
+        viewState.zeroScreenData.set(
+            ZeroScreenData(
+                title = "Oops!",
+                subtitle = "Error",
+                retry = true
+            )
+        ) // TODO
+        viewState.contentScreen.set(false)
     }
 
     private fun onUrlProcessed(action: AuthorizationAction) {
+        viewState.contentScreen.set(true)
         when (action) {
             AuthorizationAction.AUTHORIZED -> {
                 viewState.complete.set(true)

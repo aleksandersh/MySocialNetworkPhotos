@@ -11,7 +11,7 @@ import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.Friend
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.ZeroScreenData
-import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isDisplayed
+import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isGone
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.setTextOrHide
 import kotlinx.android.synthetic.main.fragment_friends.*
 import kotlinx.android.synthetic.main.layout_zero_screen.*
@@ -59,15 +59,15 @@ class FriendsFragment : Fragment(), FriendsView {
     }
 
     private fun showContent(show: Boolean) {
-        fragment_friends_recycler_view.isDisplayed = show
-        fragment_friends_layout_zero_screen.isDisplayed = !show
+        fragment_friends_recycler_view.isGone = !show
+        fragment_friends_layout_zero_screen.isGone = show
     }
 
     private fun showZeroScreenData(data: ZeroScreenData) {
         layout_zero_screen_text_view_title.text = data.title
         layout_zero_screen_text_view_subtitle.setTextOrHide(data.subtitle)
-        layout_zero_screen_button.isDisplayed = data.retry
-        layout_zero_screen_progressbar.isDisplayed = data.progress
+        layout_zero_screen_button.isGone = !data.retry
+        layout_zero_screen_progressbar.isGone = !data.progress
     }
 
     private fun setItems(items: List<Friend>) {

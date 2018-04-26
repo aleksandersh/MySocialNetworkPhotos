@@ -1,5 +1,6 @@
 package io.github.aleksandersh.mysocialnetworkphotos.data.repository
 
+import android.net.Uri
 import io.github.aleksandersh.mysocialnetworkphotos.data.BuildConfig
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.AuthorizationProperties
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.UserSession
@@ -84,13 +85,16 @@ class AuthorizationRepositoryImpl(
     }
 
     private fun getAuthorizationQuery(): String {
-        return """$HOST$AUTH_PAGE
-            |?client_id=$CLIENT_ID
-            |&display=$DISPLAY
-            |&v=$API_VERSION
-            |&response_type=$RESPONSE_TYPE
-            |&scope=${SCOPE.toString(2)}
-            |&redirect_uri=$HOST$BLANK_PAGE"""
-            .trimMargin()
+        return Uri.Builder()
+            .path(HOST)
+            .appendPath(AUTH_PAGE)
+            .appendQueryParameter("client_id", CLIENT_ID)
+            .appendQueryParameter("display", DISPLAY)
+            .appendQueryParameter("v", API_VERSION)
+            .appendQueryParameter("response_type", RESPONSE_TYPE)
+            .appendQueryParameter("scope", SCOPE.toString(2))
+            .appendQueryParameter("redirect_uri", HOST + BLANK_PAGE)
+            .build()
+            .toString()
     }
 }

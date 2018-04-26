@@ -9,7 +9,7 @@ class SignInViewState {
     val progress = ObservableField<Boolean>()
     val complete = ObservableField<Boolean>()
     val cancel = ObservableField<Boolean>()
-    val zeroScreenShowed = ObservableField<Boolean>()
+    val contentScreen = ObservableField<Boolean>()
     val zeroScreenData = ObservableField<ZeroScreenData>()
     val loadUrl = ObservableField<String>(HandleOnceStrategy())
 }

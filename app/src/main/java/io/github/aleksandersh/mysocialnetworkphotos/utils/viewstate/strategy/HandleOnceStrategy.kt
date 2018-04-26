@@ -19,7 +19,11 @@ class HandleOnceStrategy<T> :
         newValue: T,
         subscriptions: ArrayList<ObservableField<T>.FieldObserver<T>>
     ): T? {
-        subscriptions.forEach { it.callback(newValue) }
-        return null
+        return if (subscriptions.isNotEmpty()) {
+            subscriptions.forEach { it.callback(newValue) }
+            null
+        } else {
+            newValue
+        }
     }
 }

@@ -14,7 +14,7 @@ import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.ZeroScreenData
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.content.ContentActivity
-import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isDisplayed
+import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isGone
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.setTextOrHide
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 import kotlinx.android.synthetic.main.layout_zero_screen.*
@@ -44,14 +44,16 @@ class SignInFragment : Fragment(), SignInView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fragment_sign_in_webview.webViewClient = AuthWebViewClient()
+
         viewState.complete.subscribe(this, ::showContentActivity)
         viewState.progress.subscribe(this, ::showProgress)
         viewState.cancel.subscribe(this, ::cancelActivity)
         viewState.zeroScreenData.subscribe(this, ::showZeroScreenData)
-        viewState.zeroScreenShowed.subscribe(this, ::showZeroScreen)
+        viewState.contentScreen.subscribe(this, ::showContent)
         viewState.loadUrl.subscribe(this, ::loadUrl)
 
-        fragment_sign_in_webview.webViewClient = AuthWebViewClient()
+        layout_zero_screen_button.setOnClickListener { presenter.onClickRetry() }
     }
 
     private fun showContentActivity(show: Boolean) {
@@ -62,7 +64,7 @@ class SignInFragment : Fragment(), SignInView {
     }
 
     private fun showProgress(show: Boolean) {
-        fragment_sign_in_progressbar.isDisplayed = show
+        fragment_sign_in_progressbar.isGone = !show
     }
 
     private fun cancelActivity(cancel: Boolean) {
@@ -71,15 +73,16 @@ class SignInFragment : Fragment(), SignInView {
         }
     }
 
-    private fun showZeroScreen(show: Boolean) {
-        fragment_sign_in_layout_zero_screen.isDisplayed = show
+    private fun showContent(show: Boolean) {
+        fragment_sign_in_webview.isGone = !show
+        fragment_sign_in_layout_zero_screen.isGone = show
     }
 
     private fun showZeroScreenData(data: ZeroScreenData) {
         layout_zero_screen_text_view_title.text = data.title
         layout_zero_screen_text_view_subtitle.setTextOrHide(data.subtitle)
-        layout_zero_screen_button.isDisplayed = data.retry
-        layout_zero_screen_progressbar.isDisplayed = data.progress
+        layout_zero_screen_button.isGone = !data.retry
+        layout_zero_screen_progressbar.isGone = !data.progress
     }
 
     private fun loadUrl(url: String) {
