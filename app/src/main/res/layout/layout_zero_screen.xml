@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -39,10 +40,10 @@
         android:minHeight="48dp"
         android:paddingLeft="32dp"
         android:paddingRight="32dp"
+        android:text="@string/layout_zero_screen_button_title"
         android:textColor="?android:attr/textColorPrimaryInverse"
         android:textSize="16sp"
         android:visibility="gone"
-        tools:text="Retry"
         tools:visibility="visible" />
 
     <ProgressBar

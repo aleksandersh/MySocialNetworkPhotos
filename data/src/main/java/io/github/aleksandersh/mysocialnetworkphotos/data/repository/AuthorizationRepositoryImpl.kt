@@ -85,8 +85,8 @@ class AuthorizationRepositoryImpl(
     }
 
     private fun getAuthorizationQuery(): String {
-        return Uri.Builder()
-            .path(HOST)
+        val builder = Uri.Builder()
+            .encodedPath(HOST)
             .appendPath(AUTH_PAGE)
             .appendQueryParameter("client_id", CLIENT_ID)
             .appendQueryParameter("display", DISPLAY)
@@ -94,7 +94,9 @@ class AuthorizationRepositoryImpl(
             .appendQueryParameter("response_type", RESPONSE_TYPE)
             .appendQueryParameter("scope", SCOPE.toString(2))
             .appendQueryParameter("redirect_uri", HOST + BLANK_PAGE)
-            .build()
-            .toString()
+            .appendQueryParameter("state", STATE)
+
+        val uri = builder.build()
+        return uri.toString()
     }
 }

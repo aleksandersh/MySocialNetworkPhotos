@@ -7,4 +7,6 @@ interface AuthorizationHolder {
     fun getCurrentSession(): UserSession?
 
     fun saveNewSession(session: UserSession)
+
+    fun checkSessionExists(): Boolean
 }

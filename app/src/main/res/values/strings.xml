@@ -3,9 +3,10 @@
 
     <string name="activity_authorization_toolbar_title">Authorization</string>
 
-    <string name="fragment_sign_in_title">Sign in Social network</string>
-    <string name="fragment_sign_in_login_button">Log in</string>
-    <string name="fragment_sign_in_login_hint">Username or email address</string>
-    <string name="fragment_sign_in_password_hint">Password</string>
+    <string name="fragment_sign_in_loading_title">Wait a second</string>
+    <string name="fragment_sign_in_loading_subtitle">Loading in progress</string>
+    <string name="fragment_sign_in_error_title">Sorry&#8230;</string>
+    <string name="fragment_sign_in_error_subtitle">An error occurred, try again later</string>
+    <string name="layout_zero_screen_button_title">Retry</string>
 
 </resources>

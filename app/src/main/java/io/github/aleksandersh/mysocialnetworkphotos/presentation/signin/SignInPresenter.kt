@@ -1,6 +1,8 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
 
+import android.support.annotation.StringRes
 import android.webkit.WebResourceError
+import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.AuthorizationAction
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.AuthorizationInteractor
@@ -23,8 +25,10 @@ class SignInPresenter(
 
     private var authorizationTask: TaskSession? = null
 
+    private lateinit var webClientState: WebClientState
+
     init {
-        viewState.loadUrl.set(startPageQuery)
+        loadStartPage()
     }
 
     override fun onDestroy() {
@@ -45,18 +49,63 @@ class SignInPresenter(
         return handle
     }
 
-    fun onClickRetry() {
-        viewState.loadUrl.set(startPageQuery)
+    fun onPageStarted() {
+        webClientState.onPageStarted()
+    }
+
+    fun onPageFinished() {
+        webClientState.onPageFinished()
     }
 
     fun onReceivedError(error: WebResourceError) {
+        webClientState.onError(error)
+    }
+
+    fun onClickRetry() {
+        loadStartPage()
+    }
+
+    private fun loadStartPage() {
+        switchState(LoadingState())
+        viewState.loadUrl.set(startPageQuery)
+    }
+
+    private fun showContent() {
+        viewState.contentScreen.set(true)
+    }
+
+    private fun showLoading() {
+        showZeroScreen(
+            titleRes = R.string.fragment_sign_in_loading_title,
+            subtitleRes = R.string.fragment_sign_in_loading_subtitle,
+            progress = true
+        )
+    }
+
+    private fun showError(@StringRes titleRes: Int, @StringRes subtitleRes: Int) {
+        showZeroScreen(
+            titleRes = titleRes,
+            subtitleRes = subtitleRes,
+            retry = true
+        )
+    }
+
+    private fun showZeroScreen(
+        @StringRes titleRes: Int,
+        @StringRes subtitleRes: Int,
+        retry: Boolean = false,
+        progress: Boolean = false
+    ) {
+        val title = resourceManager.getString(titleRes)
+        val subtitle = resourceManager.getString(subtitleRes)
         viewState.zeroScreenData.set(
             ZeroScreenData(
-                title = "Oops!",
-                subtitle = "Error",
-                retry = true
+                title = title,
+                subtitle = subtitle,
+                retry = retry,
+                progress = progress
             )
-        ) // TODO
+        )
         viewState.contentScreen.set(false)
     }
 
@@ -69,6 +118,62 @@ class SignInPresenter(
             AuthorizationAction.CANCEL -> {
                 viewState.cancel.set(true)
             }
+        }
+    }
+
+    private fun switchState(newState: WebClientState) {
+        webClientState = newState
+        newState.show()
+    }
+
+    abstract class WebClientState {
+
+        abstract fun show()
+
+        open fun onPageStarted() {}
+
+        open fun onPageFinished() {}
+
+        open fun onError(error: WebResourceError) {}
+    }
+
+    inner class ContentState : WebClientState() {
+
+        override fun show() {
+            showContent()
+        }
+
+        override fun onError(error: WebResourceError) {
+            switchState(ErrorState(error))
+        }
+    }
+
+    inner class LoadingState : WebClientState() {
+
+        override fun show() {
+            showLoading()
+        }
+
+        override fun onPageFinished() {
+            switchState(ContentState())
+        }
+
+        override fun onError(error: WebResourceError) {
+            switchState(ErrorState(error))
+        }
+    }
+
+    inner class ErrorState(error: WebResourceError) : WebClientState() {
+
+        override fun show() {
+            showError(
+                R.string.fragment_sign_in_error_title,
+                R.string.fragment_sign_in_error_subtitle
+            )
+        }
+
+        override fun onPageStarted() {
+            switchState(LoadingState())
         }
     }
 }

@@ -11,4 +11,6 @@ interface HttpClient {
     }
 
     fun makeRequest(url: URL, method: String): String
+
+    fun makeRequest(method: String, path: String, parameters: Map<String, String>): String
 }

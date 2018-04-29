@@ -1,6 +1,7 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -56,6 +57,16 @@ class SignInFragment : Fragment(), SignInView {
         layout_zero_screen_button.setOnClickListener { presenter.onClickRetry() }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        fragment_sign_in_webview.saveState(outState)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        fragment_sign_in_webview.restoreState(savedInstanceState)
+    }
+
     private fun showContentActivity(show: Boolean) {
         if (show) {
             val newIntent = Intent(requireContext(), ContentActivity::class.java)
@@ -93,6 +104,14 @@ class SignInFragment : Fragment(), SignInView {
 
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
             return presenter.onUrlLoading(url)
+        }
+
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            presenter.onPageStarted()
+        }
+
+        override fun onPageFinished(view: WebView?, url: String?) {
+            presenter.onPageFinished()
         }
 
         override fun onReceivedError(

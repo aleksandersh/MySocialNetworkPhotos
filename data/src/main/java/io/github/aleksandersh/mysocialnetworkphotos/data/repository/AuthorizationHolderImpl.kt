@@ -14,10 +14,10 @@ class AuthorizationHolderImpl(private val sessionStorage: SessionStorage) : Auth
         if (current != null) {
             return current
         } else {
-            val saved = sessionStorage.getSession()
-            if (saved != null) {
-                currentSession.compareAndSet(null, saved)
-                return saved
+            val stored = sessionStorage.getSession()
+            if (stored != null) {
+                currentSession.compareAndSet(null, stored)
+                return stored
             }
         }
 
@@ -27,5 +27,9 @@ class AuthorizationHolderImpl(private val sessionStorage: SessionStorage) : Auth
     override fun saveNewSession(session: UserSession) {
         currentSession.set(session)
         sessionStorage.saveSession(session)
+    }
+
+    override fun checkSessionExists(): Boolean {
+        return getCurrentSession() != null
     }
 }

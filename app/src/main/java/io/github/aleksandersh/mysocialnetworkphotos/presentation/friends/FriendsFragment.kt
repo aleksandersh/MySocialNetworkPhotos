@@ -48,6 +48,8 @@ class FriendsFragment : Fragment(), FriendsView {
         viewState.items.subscribe(this, ::setItems)
         viewState.contentScreen.subscribe(this, ::showContent)
         viewState.zeroScreenData.subscribe(this, ::showZeroScreenData)
+
+        presenter.loadFriends()
     }
 
     private fun setupList() {

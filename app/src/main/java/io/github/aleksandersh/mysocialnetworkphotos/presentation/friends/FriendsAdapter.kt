@@ -29,7 +29,8 @@ class FriendsAdapter(context: Context) : RecyclerView.Adapter<FriendsAdapter.Fri
     inner class FriendsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(friend: Friend) {
-            itemView.item_friends_text_view_name.text = friend.name
+            val name = "${friend.firstName} ${friend.lastName}"
+            itemView.item_friends_text_view_name.text = name
         }
     }
 }

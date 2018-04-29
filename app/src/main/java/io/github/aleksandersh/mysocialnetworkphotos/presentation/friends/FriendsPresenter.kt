@@ -4,6 +4,7 @@ import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.FriendsInteractor
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
 import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProvider
+import io.github.aleksandersh.simpleasync.AsyncTask
 import io.github.aleksandersh.simplemvp.Presenter
 
 class FriendsPresenter(
@@ -19,5 +20,12 @@ class FriendsPresenter(
             .contentComponent
             .friendsComponent
             .release(FriendsView.TAG)
+    }
+
+    fun loadFriends() {
+        AsyncTask.firstCall(schedulersProvider.backgroundThread) {
+            friendsInteractor.getFriends()
+        }
+            .start()
     }
 }

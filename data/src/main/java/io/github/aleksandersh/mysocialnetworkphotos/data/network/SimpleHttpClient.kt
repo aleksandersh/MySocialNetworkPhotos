@@ -1,28 +1,33 @@
 package io.github.aleksandersh.mysocialnetworkphotos.data.network
 
-import android.util.Log
+import android.net.Uri
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
 class SimpleHttpClient(
+    private val host: String,
     private val connectTimeout: Int = DEFAULT_CONNECT_TIMEOUT,
-    private val readTimeout: Int = DEFAULT_READ_TIMEOUT,
-    private val logger: NetworkLogger
+    private val readTimeout: Int = DEFAULT_READ_TIMEOUT
 ) : HttpClient {
 
     companion object {
 
         private const val DEFAULT_CONNECT_TIMEOUT = 3_000
         private const val DEFAULT_READ_TIMEOUT = 3_000
+    }
 
-        private const val TAG = "SimpleHttpClient"
+    override fun makeRequest(
+        method: String,
+        path: String,
+        parameters: Map<String, String>
+    ): String {
+        val url = getUrl(path, parameters)
+        return makeRequest(url, method)
     }
 
     override fun makeRequest(url: URL, method: String): String {
-        Log.d(TAG, "sending: $method / $url")
-
         val connection = url.openConnection() as HttpURLConnection
         try {
             connection.requestMethod = method
@@ -33,20 +38,26 @@ class SimpleHttpClient(
             val code = connection.responseCode
             val message = connection.responseMessage
             if (code != HttpURLConnection.HTTP_OK) {
-                Log.d(TAG, "Error: $code $message")
                 throw IOException()
             }
 
-            Log.d(TAG, "Done: $code $message")
-
-            val data = connection.inputStream.use(::readStream)
-
-            Log.d(TAG, "Data: $data")
-
-            return data
+            return connection.inputStream.use(::readStream)
         } finally {
             connection.disconnect()
         }
+    }
+
+    private fun getUrl(path: String, parameters: Map<String, String>): URL {
+        val builder = Uri.Builder()
+            .encodedPath(host)
+            .appendEncodedPath(path)
+
+        parameters.forEach { key, value ->
+            builder.appendQueryParameter(key, value)
+        }
+
+        val uri = builder.build().toString()
+        return URL(uri)
     }
 
     private fun readStream(stream: InputStream): String {

@@ -1,6 +1,9 @@
 package io.github.aleksandersh.mysocialnetworkphotos.dependencies.application.content.friends
 
+import io.github.aleksandersh.mysocialnetworkphotos.data.BuildConfig
+import io.github.aleksandersh.mysocialnetworkphotos.data.network.SimpleHttpClient
 import io.github.aleksandersh.mysocialnetworkphotos.data.repository.FriendsRepositoryImpl
+import io.github.aleksandersh.mysocialnetworkphotos.data.storage.FriendsHttpDatasource
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.application.content.ContentComponent
 import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.FriendsRepository
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.FriendsInteractor
@@ -21,6 +24,13 @@ class FriendsComponent(val contentComponent: ContentComponent) {
     }
 
     private val friendsRepository: FriendsRepository by lazy {
-        FriendsRepositoryImpl()
+        FriendsRepositoryImpl(friendsHttpDatasource)
+    }
+
+    private val friendsHttpDatasource: FriendsHttpDatasource by lazy {
+        FriendsHttpDatasource(
+            SimpleHttpClient(BuildConfig.API_CONTENT_HOST),
+            contentComponent.applicationComponent.authorizationHolder
+        )
     }
 }
