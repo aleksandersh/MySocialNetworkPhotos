@@ -1,10 +1,15 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
 
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.ZeroScreenData
 import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.ObservableField
+import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.strategy.HandleOnceStrategy
 
 class SignInViewState {
 
-    val error = ObservableField<String>()
     val progress = ObservableField<Boolean>()
     val complete = ObservableField<Boolean>()
+    val cancel = ObservableField<Boolean>()
+    val contentScreen = ObservableField<Boolean>()
+    val zeroScreenData = ObservableField<ZeroScreenData>()
+    val loadUrl = ObservableField<String>(HandleOnceStrategy())
 }

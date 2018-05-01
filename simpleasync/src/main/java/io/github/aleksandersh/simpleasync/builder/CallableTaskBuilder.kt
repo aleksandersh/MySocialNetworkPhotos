@@ -75,4 +75,10 @@ class CallableTaskBuilder<P, R>(
         operation.setNext(nextOperation)
         return CallableTaskBuilder(asyncTask, nextOperation)
     }
+
+    fun switchScheduler(scheduler: Scheduler): CallableTaskBuilder<R, R> {
+        val nextOperation = SwitchSchedulerOperation<R>(scheduler)
+        operation.setNext(nextOperation)
+        return CallableTaskBuilder(asyncTask, nextOperation)
+    }
 }

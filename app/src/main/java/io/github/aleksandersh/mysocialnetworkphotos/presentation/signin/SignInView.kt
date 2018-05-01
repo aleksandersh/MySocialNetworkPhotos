@@ -7,8 +7,6 @@ interface SignInView {
 
     companion object {
 
-        const val TAG = "SignInFragment"
+        const val TAG = "SignInView"
     }
-
-    fun showLoading(loading: Boolean)
 }

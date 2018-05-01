@@ -1,10 +1,14 @@
-package io.github.aleksandersh.domain.repository
+package io.github.aleksandersh.mysocialnetworkphotos.domain.repository
+
+import io.github.aleksandersh.mysocialnetworkphotos.domain.model.AuthorizationProperties
 
 interface AuthorizationRepository {
 
-    fun logIn(login: String, password: String)
+    fun getAuthorizationProperties(): AuthorizationProperties
 
-    fun logOut()
+    fun checkUrlHandling(url: String): Boolean
 
-    fun confirmCurrentSession(): Boolean
+    fun checkUrlForLoginAndHandleSession(url: String): Boolean
+
+    fun checkUrlForCancel(url: String): Boolean
 }
