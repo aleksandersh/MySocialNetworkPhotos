@@ -2,8 +2,11 @@ package io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.strategy
 
 import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.ObservableField
 
-class SimpleStrategy<T> :
-    ObservableFieldStrategy<T> {
+/**
+ * При изменении оповещает всех существующих подписчиков,
+ * сохраняет значение и отправляет его новым подписчикам.
+ */
+class SimpleStrategy<T> : ObservableFieldStrategy<T> {
 
     override fun onSubscribe(
         currentValue: T?,

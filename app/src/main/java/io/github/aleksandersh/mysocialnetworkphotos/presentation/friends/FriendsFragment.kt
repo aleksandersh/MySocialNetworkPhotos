@@ -9,10 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
-import io.github.aleksandersh.mysocialnetworkphotos.domain.model.Friend
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.AdapterNotifier
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.ZeroScreenData
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.FriendsListItem
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.PhotoResult
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isGone
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.setTextOrHide
+import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.ObservableField
 import kotlinx.android.synthetic.main.fragment_friends.*
 import kotlinx.android.synthetic.main.layout_zero_screen.*
 
@@ -48,16 +51,27 @@ class FriendsFragment : Fragment(), FriendsView {
         viewState.items.subscribe(this, ::setItems)
         viewState.contentScreen.subscribe(this, ::showContent)
         viewState.zeroScreenData.subscribe(this, ::showZeroScreenData)
+        viewState.adapterNotifiers.subscribe(this, ::notifyAdapter)
 
-        presenter.loadFriends()
+        presenter.onViewCreated()
     }
 
     private fun setupList() {
         val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        fragment_friends_recycler_view.addItemDecoration(divider)
+//        fragment_friends_recycler_view.addItemDecoration(divider)
         fragment_friends_recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        adapter = FriendsAdapter(requireContext())
+        adapter = FriendsAdapter(requireContext(), ::loadNextPage, ::loadPhoto)
         fragment_friends_recycler_view.adapter = adapter
+    }
+
+    private fun loadNextPage() {
+        presenter.loadNextPage()
+    }
+
+    private fun loadPhoto(url: String, callback: (PhotoResult) -> Unit) {
+        val observableField = ObservableField<PhotoResult>()
+        observableField.subscribe(this, callback)
+        presenter.loadPhoto(observableField, url)
     }
 
     private fun showContent(show: Boolean) {
@@ -72,8 +86,12 @@ class FriendsFragment : Fragment(), FriendsView {
         layout_zero_screen_progressbar.isGone = !data.progress
     }
 
-    private fun setItems(items: List<Friend>) {
-        adapter.items = items
+    private fun notifyAdapter(notifier: AdapterNotifier) {
+        notifier.notify(adapter)
+    }
+
+    private fun setItems(items: List<FriendsListItem>) {
+        adapter.setItems(items)
         adapter.notifyDataSetChanged()
     }
 }

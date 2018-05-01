@@ -6,31 +6,97 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.github.aleksandersh.mysocialnetworkphotos.R
-import io.github.aleksandersh.mysocialnetworkphotos.domain.model.Friend
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.*
 import kotlinx.android.synthetic.main.item_friends.view.*
+import kotlinx.android.synthetic.main.item_friends_error.view.*
 
-class FriendsAdapter(context: Context) : RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder>() {
+class FriendsAdapter(
+    context: Context,
+    private val loadNextPage: () -> Unit,
+    private val loadPhoto: (url: String, callback: (PhotoResult) -> Unit) -> Unit
+) : RecyclerView.Adapter<FriendsAdapter.ViewHolder>() {
 
-    var items: List<Friend> = emptyList()
+    companion object {
+        private const val LOAD_OFFSET = 3
+    }
+
+    private var items: List<FriendsListItem> = emptyList()
+    private var lastLoadPosition: Int = 0
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendsViewHolder {
-        val view = inflater.inflate(R.layout.item_friends, parent, false)
-        return FriendsViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return when (viewType) {
+            R.layout.item_friends -> {
+                val view = inflater.inflate(viewType, parent, false)
+                FriendViewHolder(view)
+            }
+            R.layout.item_friends_loading -> {
+                val view = inflater.inflate(viewType, parent, false)
+                LoadingViewHolder(view)
+            }
+            R.layout.item_friends_error -> {
+                val view = inflater.inflate(viewType, parent, false)
+                ErrorViewHolder(view)
+            }
+            else -> throw UnsupportedOperationException("Unsupported item type: $viewType")
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (items[position]) {
+            is ItemFriend -> R.layout.item_friends
+            is ItemLoading -> R.layout.item_friends_loading
+            is ItemError -> R.layout.item_friends_error
+            else -> throw UnsupportedOperationException("Unable to determine type of item with position: $position")
+        }
     }
 
     override fun getItemCount(): Int = items.size
 
-    override fun onBindViewHolder(holder: FriendsViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (position > lastLoadPosition && position >= itemCount - LOAD_OFFSET) {
+            lastLoadPosition = position
+            loadNextPage()
+        }
         holder.bind(items[position])
     }
 
-    inner class FriendsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun setItems(items: List<FriendsListItem>) {
+        this.items = items
+        lastLoadPosition = -1
+    }
 
-        fun bind(friend: Friend) {
+    abstract class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        open fun bind(item: FriendsListItem) {}
+    }
+
+    inner class FriendViewHolder(itemView: View) : ViewHolder(itemView) {
+
+        private var photoUrl: String = ""
+
+        override fun bind(item: FriendsListItem) {
+            val friend = (item as ItemFriend).friend
             val name = "${friend.firstName} ${friend.lastName}"
+            photoUrl = friend.smallPhotoUrl
             itemView.item_friends_text_view_name.text = name
+            itemView.item_friends_image_view_photo.setImageResource(android.R.color.transparent)
+            loadPhoto(friend.smallPhotoUrl) { result ->
+                if (result.url == photoUrl) {
+                    itemView.item_friends_image_view_photo.setImageBitmap(result.bitmap)
+                }
+            }
         }
     }
+
+    class ErrorViewHolder(itemView: View) : ViewHolder(itemView) {
+
+        override fun bind(item: FriendsListItem) {
+            val error = (item as ItemError).error
+            itemView.item_friends_error_text_view_title.text = error
+        }
+    }
+
+    class LoadingViewHolder(itemView: View) : ViewHolder(itemView)
 }

@@ -4,14 +4,14 @@ import android.net.Uri
 import io.github.aleksandersh.mysocialnetworkphotos.data.BuildConfig
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.AuthorizationProperties
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.UserSession
-import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.AuthorizationHolder
+import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.SessionHolder
 import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.AuthorizationRepository
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 class AuthorizationRepositoryImpl(
-    private val authorizationHolder: AuthorizationHolder
+    private val sessionHolder: SessionHolder
 ) : AuthorizationRepository {
 
     companion object {
@@ -60,7 +60,7 @@ class AuthorizationRepositoryImpl(
             val expiresDate = Date(expiresTime + currentTime)
 
             val session = UserSession(userId, token, expiresDate)
-            authorizationHolder.saveNewSession(session)
+            sessionHolder.saveNewSession(session)
 
             return true
         }

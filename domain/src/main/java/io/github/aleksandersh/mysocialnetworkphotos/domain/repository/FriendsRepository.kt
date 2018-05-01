@@ -1,8 +1,8 @@
 package io.github.aleksandersh.mysocialnetworkphotos.domain.repository
 
-import io.github.aleksandersh.mysocialnetworkphotos.domain.model.Friend
+import io.github.aleksandersh.mysocialnetworkphotos.domain.model.FriendsResult
 
 interface FriendsRepository {
 
-    fun getFriends(): List<Friend>
+    fun getFriends(offset: Int, count: Int): FriendsResult
 }

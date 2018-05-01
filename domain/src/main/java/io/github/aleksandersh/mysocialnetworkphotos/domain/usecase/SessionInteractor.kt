@@ -1,10 +1,10 @@
 package io.github.aleksandersh.mysocialnetworkphotos.domain.usecase
 
-import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.AuthorizationHolder
+import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.SessionRepository
 
-class SessionInteractor(private val authorizationHolder: AuthorizationHolder) {
+class SessionInteractor(private val sessionRepository: SessionRepository) {
 
     fun checkSessionExists(): Boolean {
-        return authorizationHolder.checkSessionExists()
+        return sessionRepository.checkSession()
     }
 }

@@ -30,15 +30,22 @@ class ContentPresenter(
         sessionCheckTask = AsyncTask.firstCall(schedulersProvider.backgroundThread) {
             sessionInteractor.checkSessionExists()
         }
-            .thenProcess(schedulersProvider.mainThread, ::handleSessionResult)
+            .switchScheduler(schedulersProvider.mainThread)
+            .thenProcess(::handleSessionResult)
+            .handleError(::handleSessionError)
             .start()
     }
 
     private fun handleSessionResult(exists: Boolean) {
+        sessionChecked = true
         if (exists) {
             viewState.screen.set(Screen.FRIENDS)
         } else {
             viewState.screen.set(Screen.AUTHORIZATION)
         }
+    }
+
+    private fun handleSessionError(error: Throwable) {
+        // TODO
     }
 }

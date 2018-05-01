@@ -61,4 +61,10 @@ class RunnableTaskBuilder<T>(
         operation.setNext(nextOperation)
         return CallableTaskBuilder(asyncTask, nextOperation)
     }
+
+    fun switchScheduler(scheduler: Scheduler): CallableTaskBuilder<Unit, Unit> {
+        val nextOperation = SwitchSchedulerOperation<Unit>(scheduler)
+        operation.setNext(nextOperation)
+        return CallableTaskBuilder(asyncTask, nextOperation)
+    }
 }

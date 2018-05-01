@@ -1,7 +1,6 @@
-package io.github.aleksandersh.mysocialnetworkphotos.data.network.exception
+package io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.exception
 
-class ResponseParsingException :
-    NetworkException {
+open class NetworkException : RuntimeException {
 
     constructor() : super()
 

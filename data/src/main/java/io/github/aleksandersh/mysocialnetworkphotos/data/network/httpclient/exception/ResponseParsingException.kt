@@ -1,6 +1,6 @@
-package io.github.aleksandersh.mysocialnetworkphotos.data.network.exception
+package io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.exception
 
-class MissingSessionException :
+class ResponseParsingException :
     NetworkException {
 
     constructor() : super()

@@ -2,8 +2,10 @@ package io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.strategy
 
 import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.ObservableField
 
-class HandleOnceStrategy<T> :
-    ObservableFieldStrategy<T> {
+/**
+ * Значение гарантированно будет передано подписчикам только один раз и затем удалено.
+ */
+class HandleOnceStrategy<T> : ObservableFieldStrategy<T> {
 
     override fun onSubscribe(
         currentValue: T?,

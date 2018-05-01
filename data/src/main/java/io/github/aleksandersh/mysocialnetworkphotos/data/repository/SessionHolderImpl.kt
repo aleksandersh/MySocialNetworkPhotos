@@ -2,10 +2,10 @@ package io.github.aleksandersh.mysocialnetworkphotos.data.repository
 
 import io.github.aleksandersh.mysocialnetworkphotos.data.storage.SessionStorage
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.UserSession
-import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.AuthorizationHolder
+import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.SessionHolder
 import java.util.concurrent.atomic.AtomicReference
 
-class AuthorizationHolderImpl(private val sessionStorage: SessionStorage) : AuthorizationHolder {
+class SessionHolderImpl(private val sessionStorage: SessionStorage) : SessionHolder {
 
     private var currentSession: AtomicReference<UserSession?> = AtomicReference(null)
 
@@ -27,9 +27,5 @@ class AuthorizationHolderImpl(private val sessionStorage: SessionStorage) : Auth
     override fun saveNewSession(session: UserSession) {
         currentSession.set(session)
         sessionStorage.saveSession(session)
-    }
-
-    override fun checkSessionExists(): Boolean {
-        return getCurrentSession() != null
     }
 }
