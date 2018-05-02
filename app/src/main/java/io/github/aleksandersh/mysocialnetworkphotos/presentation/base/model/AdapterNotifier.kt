@@ -21,6 +21,7 @@ sealed class AdapterNotifier {
     }
 
     class ItemChanged(private val position: Int) : AdapterNotifier() {
+
         override fun notify(adapter: RecyclerView.Adapter<*>) {
             adapter.notifyItemChanged(position)
         }

@@ -1,6 +1,7 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.friends
 
 import android.content.Context
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,9 @@ import kotlinx.android.synthetic.main.item_friends_error.view.*
 class FriendsAdapter(
     context: Context,
     private val loadNextPage: () -> Unit,
-    private val loadPhoto: (url: String, callback: (PhotoResult) -> Unit) -> Unit
+    private val loadPhoto: (url: String, callback: (PhotoResult) -> Unit) -> Unit,
+    private val onClickItem: (View, FriendVm) -> Unit,
+    private val onClickRetry: () -> Unit
 ) : RecyclerView.Adapter<FriendsAdapter.ViewHolder>() {
 
     companion object {
@@ -78,10 +81,17 @@ class FriendsAdapter(
 
         override fun bind(item: FriendsListItem) {
             val friend = (item as ItemFriend).friend
-            val name = "${friend.firstName} ${friend.lastName}"
+            itemView.item_friends_text_view_name.text = friend.fullName
+
+            val photoView = itemView.item_friends_image_view_photo
+            photoView.setImageResource(android.R.color.transparent)
+            val transitionName = friend.photoId
+            ViewCompat.setTransitionName(photoView, transitionName.orEmpty())
+            if (transitionName != null) {
+                photoView.setOnClickListener { onClickItem(photoView, friend) }
+            }
+
             photoUrl = friend.smallPhotoUrl
-            itemView.item_friends_text_view_name.text = name
-            itemView.item_friends_image_view_photo.setImageResource(android.R.color.transparent)
             loadPhoto(friend.smallPhotoUrl) { result ->
                 if (result.url == photoUrl) {
                     itemView.item_friends_image_view_photo.setImageBitmap(result.bitmap)
@@ -90,11 +100,12 @@ class FriendsAdapter(
         }
     }
 
-    class ErrorViewHolder(itemView: View) : ViewHolder(itemView) {
+    inner class ErrorViewHolder(itemView: View) : ViewHolder(itemView) {
 
         override fun bind(item: FriendsListItem) {
             val error = (item as ItemError).error
             itemView.item_friends_error_text_view_title.text = error
+            itemView.item_friends_error_button_retry.setOnClickListener { onClickRetry() }
         }
     }
 

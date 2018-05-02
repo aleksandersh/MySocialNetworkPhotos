@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context="io.github.aleksandersh.mysocialnetworkphotos.presentation.content.ContentActivity">
 
     <FrameLayout
@@ -10,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!--TODO-->
     <include
-        layout="@layout/layout_session_loading"
+        android:id="@+id/activity_content_layout_zero_screen"
+        layout="@layout/layout_zero_screen"
         android:visibility="gone" />
 
 </FrameLayout>

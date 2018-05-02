@@ -2,7 +2,6 @@ package io.github.aleksandersh.mysocialnetworkphotos.data.repository
 
 import io.github.aleksandersh.mysocialnetworkphotos.data.storage.SessionStorage
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.UserSession
-import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.SessionHolder
 import java.util.concurrent.atomic.AtomicReference
 
 class SessionHolderImpl(private val sessionStorage: SessionStorage) : SessionHolder {
@@ -27,5 +26,10 @@ class SessionHolderImpl(private val sessionStorage: SessionStorage) : SessionHol
     override fun saveNewSession(session: UserSession) {
         currentSession.set(session)
         sessionStorage.saveSession(session)
+    }
+
+    override fun invalidateSession() {
+        currentSession.set(null)
+        sessionStorage.clearSession()
     }
 }
