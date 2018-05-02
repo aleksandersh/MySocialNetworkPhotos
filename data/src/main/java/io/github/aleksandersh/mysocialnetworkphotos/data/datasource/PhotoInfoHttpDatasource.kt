@@ -61,7 +61,8 @@ class PhotoInfoHttpDatasource(
     private fun parsePhotoInfoJson(json: JSONObject): PhotoInfo {
         try {
             return json
-                .getJSONObject("response")
+                .getJSONArray("response")
+                .getJSONObject(0)
                 .let {
                     with(it) {
                         val date = getLong("date")

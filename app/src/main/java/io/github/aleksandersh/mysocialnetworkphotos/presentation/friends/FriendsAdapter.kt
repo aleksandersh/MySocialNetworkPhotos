@@ -80,8 +80,7 @@ class FriendsAdapter(
 
         override fun bind(item: FriendsListItem) {
             val friend = (item as ItemFriend).friend
-            val name = "${friend.firstName} ${friend.lastName}"
-            itemView.item_friends_text_view_name.text = name
+            itemView.item_friends_text_view_name.text = friend.fullName
 
             val photoView = itemView.item_friends_image_view_photo
             photoView.setImageResource(android.R.color.transparent)

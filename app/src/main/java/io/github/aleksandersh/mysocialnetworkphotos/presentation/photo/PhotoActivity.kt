@@ -6,6 +6,7 @@ import android.os.Handler
 import android.support.v4.view.ViewCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
 import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.PhotoInfo
@@ -34,12 +35,6 @@ class PhotoActivity : AppCompatActivity(), PhotoView {
         setContentView(R.layout.fragment_photo)
         supportPostponeEnterTransition()
 
-        setSupportActionBar(fragment_photo_toolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-        }
-
         intent.extras?.let { args ->
             friend = checkNotNull(args.getParcelable(EXTRA_FRIEND))
             args.getString(EXTRA_TRANSITION_NAME)
@@ -48,6 +43,13 @@ class PhotoActivity : AppCompatActivity(), PhotoView {
                 }
 
         } ?: throw RuntimeException("Arguments of the fragment is not set")
+
+        setSupportActionBar(fragment_photo_toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+            subtitle = friend.fullName
+        }
 
         val appComponent = Tree.applicationComponent.provide(PhotoView.TAG)
         val photoComponent = Tree.applicationComponent
@@ -101,6 +103,8 @@ class PhotoActivity : AppCompatActivity(), PhotoView {
     }
 
     private fun showPhotoInfo(photoInfo: PhotoInfo) {
-
+        fragment_photo_text_view_like_count.text = photoInfo.likeCount.toString()
+        fragment_photo_text_view_comment_count.text = photoInfo.commentCount.toString()
+        fragment_photo_layout_info.visibility = View.VISIBLE
     }
 }

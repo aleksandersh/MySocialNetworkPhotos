@@ -9,4 +9,6 @@
     <string name="fragment_sign_in_error_subtitle">An error occurred, try again later</string>
     <string name="layout_zero_screen_button_title">Retry</string>
 
+    <string name="fragment_photo_title">Photo</string>
+
 </resources>

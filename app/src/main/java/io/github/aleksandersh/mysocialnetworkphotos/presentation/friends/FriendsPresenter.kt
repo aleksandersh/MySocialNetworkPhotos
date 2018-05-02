@@ -135,6 +135,7 @@ class FriendsPresenter(
                 id = id,
                 firstName = firstName,
                 lastName = lastName,
+                fullName = "$firstName $lastName",
                 smallPhotoUrl = smallPhotoUrl,
                 bigPhotoUrl = bigPhotoUrl,
                 photoId = photoId

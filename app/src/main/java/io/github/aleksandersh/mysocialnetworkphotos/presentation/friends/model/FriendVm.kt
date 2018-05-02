@@ -7,6 +7,7 @@ data class FriendVm(
     val id: Long,
     val firstName: String,
     val lastName: String,
+    val fullName: String,
     val smallPhotoUrl: String,
     val bigPhotoUrl: String,
     val photoId: String?
@@ -18,6 +19,7 @@ data class FriendVm(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
+        parcel.readString(),
         parcel.readString()
     )
 
@@ -25,6 +27,7 @@ data class FriendVm(
         parcel.writeLong(id)
         parcel.writeString(firstName)
         parcel.writeString(lastName)
+        parcel.writeString(fullName)
         parcel.writeString(smallPhotoUrl)
         parcel.writeString(bigPhotoUrl)
         parcel.writeString(photoId)
