@@ -36,6 +36,7 @@ class ContentComponent(val applicationComponent: ApplicationComponent) {
     private val sessionHttpDatasource: SessionHttpDatasource by lazy {
         SessionHttpDatasource(
             applicationComponent.httpClient,
+            applicationComponent.responseErrorHandler,
             applicationComponent.sessionHolder
         )
     }

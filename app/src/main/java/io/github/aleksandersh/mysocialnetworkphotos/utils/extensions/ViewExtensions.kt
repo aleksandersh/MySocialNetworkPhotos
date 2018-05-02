@@ -1,5 +1,7 @@
 package io.github.aleksandersh.mysocialnetworkphotos.utils.extensions
 
+import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 
@@ -28,4 +30,8 @@ fun TextView.setTextOrHide(text: String?) {
     } else {
         this.visibility = View.GONE
     }
+}
+
+fun Fragment.requireAppCompatActivity(): AppCompatActivity {
+    return this.requireActivity() as AppCompatActivity
 }

@@ -1,8 +1,10 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.friends
 
+import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +13,10 @@ import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.AdapterNotifier
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.ZeroScreenData
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.FriendVm
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.FriendsListItem
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.PhotoResult
+import io.github.aleksandersh.mysocialnetworkphotos.presentation.photo.PhotoActivity
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isGone
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.setTextOrHide
 import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.ObservableField
@@ -24,6 +28,14 @@ class FriendsFragment : Fragment(), FriendsView {
     private lateinit var presenter: FriendsPresenter
     private lateinit var viewState: FriendsViewState
     private lateinit var adapter: FriendsAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+
+        setupList()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +58,7 @@ class FriendsFragment : Fragment(), FriendsView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupList()
+        setupListView()
 
         viewState.items.subscribe(this, ::setItems)
         viewState.contentScreen.subscribe(this, ::showContent)
@@ -57,10 +69,12 @@ class FriendsFragment : Fragment(), FriendsView {
     }
 
     private fun setupList() {
-        val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-//        fragment_friends_recycler_view.addItemDecoration(divider)
+        val onClickItem: (View, FriendVm) -> Unit = { view, friend -> onClickItem(view, friend) }
+        adapter = FriendsAdapter(requireContext(), ::loadNextPage, ::loadPhoto, onClickItem)
+    }
+
+    private fun setupListView() {
         fragment_friends_recycler_view.layoutManager = LinearLayoutManager(requireContext())
-        adapter = FriendsAdapter(requireContext(), ::loadNextPage, ::loadPhoto)
         fragment_friends_recycler_view.adapter = adapter
     }
 
@@ -93,5 +107,20 @@ class FriendsFragment : Fragment(), FriendsView {
     private fun setItems(items: List<FriendsListItem>) {
         adapter.setItems(items)
         adapter.notifyDataSetChanged()
+    }
+
+    private fun onClickItem(view: View, friend: FriendVm) {
+        val transitionName = ViewCompat.getTransitionName(view)
+        val activity = requireActivity()
+
+        val intent = Intent(activity, PhotoActivity::class.java)
+        intent.putExtra(PhotoActivity.EXTRA_FRIEND, friend)
+        intent.putExtra(PhotoActivity.EXTRA_TRANSITION_NAME, transitionName)
+
+        val options = ActivityOptionsCompat
+            .makeSceneTransitionAnimation(activity, view, transitionName)
+            .toBundle()
+
+        startActivity(intent, options)
     }
 }

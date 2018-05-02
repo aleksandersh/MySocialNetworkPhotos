@@ -4,7 +4,6 @@ import android.net.Uri
 import io.github.aleksandersh.mysocialnetworkphotos.data.BuildConfig
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.AuthorizationProperties
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.UserSession
-import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.SessionHolder
 import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.AuthorizationRepository
 import java.util.*
 import java.util.concurrent.TimeUnit

@@ -5,5 +5,6 @@ data class Friend(
     val firstName: String,
     val lastName: String,
     val smallPhotoUrl: String,
-    val bigPhotoUrl: String
+    val bigPhotoUrl: String,
+    val photoId: String?
 )

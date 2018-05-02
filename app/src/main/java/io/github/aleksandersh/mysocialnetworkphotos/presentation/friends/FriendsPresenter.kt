@@ -2,6 +2,7 @@ package io.github.aleksandersh.mysocialnetworkphotos.presentation.friends
 
 import android.graphics.BitmapFactory
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
+import io.github.aleksandersh.mysocialnetworkphotos.domain.model.Friend
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.FriendsInteractor
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.PhotoInteractor
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.AdapterNotifier
@@ -62,7 +63,7 @@ class FriendsPresenter(
         loadFriendsTask = AsyncTask
             .firstCall(schedulersProvider.backgroundThread) {
                 val result = friendsInteractor.getFriends(currentPage)
-                val friends = result.friends.map(::ItemFriend)
+                val friends = result.friends.map { ItemFriend(convertFriendToVm(it)) }
                 val contentFinished = result.contentFinished
                 Pair(friends, contentFinished)
             }
@@ -70,16 +71,24 @@ class FriendsPresenter(
             .thenProcess {
                 val friends = it.first
                 contentFinished = it.second
-                val loadingItem = items.removeLast()
-                val insertPosition = items.size
-                var insertCount = friends.size
-                items.addAll(friends)
-                if (!contentFinished) {
-                    items.add(loadingItem)
-                    insertCount++
+                val oldLoadingPosition = items.size - 1
+
+                if (friends.isNotEmpty()) {
+                    val insertPosition = items.size
+                    val loadingItem = items.removeLast()
+                    var insertCount = friends.size - 1
+                    items.addAll(friends)
+                    if (!contentFinished) {
+                        items.add(loadingItem)
+                        insertCount++
+                    }
+                    notifyAdapter(AdapterNotifier.ItemChanged(oldLoadingPosition))
+                    notifyAdapter(AdapterNotifier.ItemRangeInserted(insertPosition, insertCount))
+                } else if (contentFinished) {
+                    notifyAdapter(AdapterNotifier.ItemRemoved(oldLoadingPosition))
+                } else {
+                    throw RuntimeException("Content not finished and returns empty list")
                 }
-                notifyAdapter(AdapterNotifier.ItemRemoved(insertPosition - 1))
-                notifyAdapter(AdapterNotifier.ItemRangeInserted(insertPosition, insertCount))
                 currentPage++
                 loading = false
             }
@@ -98,7 +107,7 @@ class FriendsPresenter(
                 photoInteractor.loadPhotoPreview(url)
             }
             .thenProcess {
-                BitmapFactory.decodeByteArray(it, 0, it.size, BitmapFactory.Options())
+                BitmapFactory.decodeByteArray(it, 0, it.size)
             }
             .switchScheduler(schedulersProvider.mainThread)
             .thenProcess { observableField.set(PhotoResult(it, url)) }
@@ -118,5 +127,18 @@ class FriendsPresenter(
 
     private fun notifyAdapter(notifier: AdapterNotifier) {
         viewState.adapterNotifiers.set(notifier)
+    }
+
+    private fun convertFriendToVm(model: Friend): FriendVm {
+        return with(model) {
+            FriendVm(
+                id = id,
+                firstName = firstName,
+                lastName = lastName,
+                smallPhotoUrl = smallPhotoUrl,
+                bigPhotoUrl = bigPhotoUrl,
+                photoId = photoId
+            )
+        }
     }
 }

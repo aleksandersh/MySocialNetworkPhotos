@@ -5,10 +5,10 @@ import io.github.aleksandersh.mysocialnetworkphotos.data.network.api.ResponseErr
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.HttpClient
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.exception.MissingSessionException
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.exception.ResponseParsingException
+import io.github.aleksandersh.mysocialnetworkphotos.data.repository.SessionHolder
 import io.github.aleksandersh.mysocialnetworkphotos.data.utils.mapJSONObject
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.Friend
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.FriendsResult
-import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.SessionHolder
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -34,7 +34,7 @@ class FriendsHttpDatasource(
         val parameters = mapOf(
             PARAM_ACCESS_TOKEN to getToken(),
             PARAM_ORDER to "hints",
-            PARAM_FIELDS to "photo_100, photo_max_orig",
+            PARAM_FIELDS to "photo_100, photo_max, photo_id",
             PARAM_OFFSET to offset.toString(),
             PARAM_COUNT to count.toString(),
             PARAM_API_VERSION to BuildConfig.API_VERSION
@@ -74,12 +74,14 @@ class FriendsHttpDatasource(
                     val friends = it.getJSONArray("items")
                         .mapJSONObject {
                             with(it) {
-                                val id = getLong("id")
-                                val firstName = getString("first_name")
-                                val lastName = getString("last_name")
-                                val smallPhotoUrl = getString("photo_100")
-                                val bigPhotoUrl = getString("photo_max_orig")
-                                Friend(id, firstName, lastName, smallPhotoUrl, bigPhotoUrl)
+                                Friend(
+                                    id = getLong("id"),
+                                    firstName = getString("first_name"),
+                                    lastName = getString("last_name"),
+                                    smallPhotoUrl = getString("photo_100"),
+                                    bigPhotoUrl = getString("photo_max"),
+                                    photoId = optString("photo_id")
+                                )
                             }
                         }
                     val totalCount = it.getInt("count")

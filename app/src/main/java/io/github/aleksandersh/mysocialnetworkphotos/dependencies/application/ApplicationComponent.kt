@@ -7,7 +7,7 @@ import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.Http
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.SimpleHttpClient
 import io.github.aleksandersh.mysocialnetworkphotos.data.repository.SessionHolderImpl
 import io.github.aleksandersh.mysocialnetworkphotos.data.storage.SessionStorage
-import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.SessionHolder
+import io.github.aleksandersh.mysocialnetworkphotos.data.repository.SessionHolder
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
 import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProvider
 import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProviderImpl
