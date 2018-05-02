@@ -1,6 +1,7 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.friends
 
 import android.graphics.BitmapFactory
+import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.Friend
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.FriendsInteractor
@@ -56,8 +57,18 @@ class FriendsPresenter(
         }
     }
 
+    fun retryNextPageLoading() {
+        if (items.lastOrNull() is ItemError) {
+            items.removeLast()
+            items.addLast(ItemLoading())
+            notifyAdapter(AdapterNotifier.ItemChanged(items.lastIndex))
+            loadNextPage()
+        }
+    }
+
     fun loadNextPage() {
         if (loading || contentFinished) return
+
         loading = true
         loadFriendsTask?.cancel()
         loadFriendsTask = AsyncTask
@@ -92,12 +103,7 @@ class FriendsPresenter(
                 currentPage++
                 loading = false
             }
-            .handleError {
-                items.removeLast()
-                items.addLast(ItemError("Error!"))
-                notifyAdapter(AdapterNotifier.ItemChanged(items.lastIndex))
-                loading = false
-            }
+            .handleError(::nextPageLoadingError)
             .start()
     }
 
@@ -111,11 +117,22 @@ class FriendsPresenter(
             }
             .switchScheduler(schedulersProvider.mainThread)
             .thenProcess { observableField.set(PhotoResult(it, url)) }
-            .handleError { } // TODO: тут можно выставлять заглушку при неудаче
+            .handleError {
+                val image = resourceManager.getBitmap(R.drawable.ic_broken_image)
+                observableField.set(PhotoResult(image, url))
+            }
             .start()
             .putInBuffer(loadPhotoTasks) // TODO: хотя это не решит проблему с отменой загрузки
         // картинки, она все равно скачается до конца, но результат передан не будет.
         // Может быть запускать каждую загрузку на отдельно потоке и при отмене грохать его?
+    }
+
+    private fun nextPageLoadingError(error: Throwable) {
+        items.removeLast()
+        val description = resourceManager.getString(R.string.item_friends_error_default_description)
+        items.addLast(ItemError(description))
+        notifyAdapter(AdapterNotifier.ItemChanged(items.lastIndex))
+        loading = false
     }
 
     private fun initializeList() {

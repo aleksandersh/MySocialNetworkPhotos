@@ -33,8 +33,6 @@ class FriendsFragment : Fragment(), FriendsView {
         super.onCreate(savedInstanceState)
 
         setHasOptionsMenu(true)
-
-        setupList()
     }
 
     override fun onCreateView(
@@ -58,7 +56,7 @@ class FriendsFragment : Fragment(), FriendsView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupListView()
+        setupList()
 
         viewState.items.subscribe(this, ::setItems)
         viewState.contentScreen.subscribe(this, ::showContent)
@@ -69,11 +67,17 @@ class FriendsFragment : Fragment(), FriendsView {
     }
 
     private fun setupList() {
-        val onClickItem: (View, FriendVm) -> Unit = { view, friend -> onClickItem(view, friend) }
-        adapter = FriendsAdapter(requireContext(), ::loadNextPage, ::loadPhoto, onClickItem)
-    }
-
-    private fun setupListView() {
+        if (!::adapter.isInitialized) {
+            val onClickItem: (View, FriendVm) -> Unit =
+                { view, friend -> onClickItem(view, friend) }
+            adapter = FriendsAdapter(
+                requireContext(),
+                ::loadNextPage,
+                ::loadPhoto,
+                onClickItem,
+                presenter::retryNextPageLoading
+            )
+        }
         fragment_friends_recycler_view.layoutManager = LinearLayoutManager(requireContext())
         fragment_friends_recycler_view.adapter = adapter
     }

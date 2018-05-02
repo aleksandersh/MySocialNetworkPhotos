@@ -16,6 +16,7 @@ class ContentComponent(val applicationComponent: ApplicationComponent) {
 
     val presenterFactory: ContentPresenterFactory by lazy {
         ContentPresenterFactory(
+            applicationComponent.resourceManager,
             applicationComponent.schedulersProvider,
             sessionInteractor
         )

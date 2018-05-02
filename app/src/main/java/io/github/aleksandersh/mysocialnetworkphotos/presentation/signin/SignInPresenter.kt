@@ -76,8 +76,8 @@ class SignInPresenter(
 
     private fun showLoading() {
         showZeroScreen(
-            titleRes = R.string.fragment_sign_in_loading_title,
-            subtitleRes = R.string.fragment_sign_in_loading_subtitle,
+            titleRes = R.string.all_loading_default_title,
+            subtitleRes = R.string.all_loading_default_subtitle,
             progress = true
         )
     }
@@ -167,8 +167,8 @@ class SignInPresenter(
 
         override fun show() {
             showError(
-                R.string.fragment_sign_in_error_title,
-                R.string.fragment_sign_in_error_subtitle
+                R.string.all_error_default_title,
+                R.string.all_error_default_subtitle
             )
         }
 

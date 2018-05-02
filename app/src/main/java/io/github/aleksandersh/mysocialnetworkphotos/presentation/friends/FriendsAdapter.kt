@@ -15,7 +15,8 @@ class FriendsAdapter(
     context: Context,
     private val loadNextPage: () -> Unit,
     private val loadPhoto: (url: String, callback: (PhotoResult) -> Unit) -> Unit,
-    private val onClickItem: (View, FriendVm) -> Unit
+    private val onClickItem: (View, FriendVm) -> Unit,
+    private val onClickRetry: () -> Unit
 ) : RecyclerView.Adapter<FriendsAdapter.ViewHolder>() {
 
     companion object {
@@ -99,11 +100,12 @@ class FriendsAdapter(
         }
     }
 
-    class ErrorViewHolder(itemView: View) : ViewHolder(itemView) {
+    inner class ErrorViewHolder(itemView: View) : ViewHolder(itemView) {
 
         override fun bind(item: FriendsListItem) {
             val error = (item as ItemError).error
             itemView.item_friends_error_text_view_title.text = error
+            itemView.item_friends_error_button_retry.setOnClickListener { onClickRetry() }
         }
     }
 
