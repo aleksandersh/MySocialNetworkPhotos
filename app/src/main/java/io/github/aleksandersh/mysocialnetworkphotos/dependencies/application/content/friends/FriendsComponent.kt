@@ -14,7 +14,8 @@ class FriendsComponent(val contentComponent: ContentComponent) {
             contentComponent.applicationComponent.resourceManager,
             contentComponent.applicationComponent.schedulersProvider,
             friendsInteractor,
-            contentComponent.photoInteractor
+            contentComponent.photoInteractor,
+            contentComponent.sessionInteractor
         )
     }
 

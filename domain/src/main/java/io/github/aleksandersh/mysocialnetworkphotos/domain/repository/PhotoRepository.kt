@@ -5,4 +5,6 @@ interface PhotoRepository {
     fun loadPhotoPreview(url: String): ByteArray
 
     fun loadPhoto(url: String): ByteArray
+
+    fun clearCache()
 }

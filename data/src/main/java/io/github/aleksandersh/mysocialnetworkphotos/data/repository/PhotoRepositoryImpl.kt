@@ -24,4 +24,8 @@ class PhotoRepositoryImpl(
     private fun loadFromNetwork(url: String): ByteArray {
         return httpClient.makeRequest(HttpClient.METHOD_GET, url)
     }
+
+    override fun clearCache() {
+        photoLightweightCache.clear()
+    }
 }

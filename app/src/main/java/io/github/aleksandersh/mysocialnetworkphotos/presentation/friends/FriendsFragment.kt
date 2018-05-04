@@ -6,9 +6,7 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.AdapterNotifier
@@ -18,6 +16,7 @@ import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.F
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.PhotoResult
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.photo.PhotoActivity
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.isGone
+import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.requireAppCompatActivity
 import io.github.aleksandersh.mysocialnetworkphotos.utils.extensions.setTextOrHide
 import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.ObservableField
 import kotlinx.android.synthetic.main.fragment_friends.*
@@ -58,12 +57,28 @@ class FriendsFragment : Fragment(), FriendsView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupList()
 
+        requireAppCompatActivity().setSupportActionBar(fragment_friends_toolbar)
+
         viewState.items.subscribe(this, ::setItems)
         viewState.contentScreen.subscribe(this, ::showContent)
         viewState.zeroScreenData.subscribe(this, ::showZeroScreenData)
         viewState.adapterNotifiers.subscribe(this, ::notifyAdapter)
 
         presenter.onViewCreated()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.friends_toolbar_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.friends_toolbar_menu_exit -> {
+                presenter.onClickExitFromApp()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupList() {

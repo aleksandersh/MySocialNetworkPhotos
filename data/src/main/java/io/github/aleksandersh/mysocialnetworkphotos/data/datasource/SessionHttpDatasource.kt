@@ -65,7 +65,7 @@ class SessionHttpDatasource(
     private fun checkForError(json: JSONObject): JSONObject? {
         return try {
             responseErrorHandler.checkForError(json)
-        } catch (e: ApiException) {
+        } catch (exception: ApiException) {
             sessionHolder.invalidateSession()
             null
         }

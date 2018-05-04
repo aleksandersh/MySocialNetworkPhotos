@@ -2,6 +2,7 @@ package io.github.aleksandersh.mysocialnetworkphotos.data.datasource
 
 import io.github.aleksandersh.mysocialnetworkphotos.data.BuildConfig
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.api.ResponseErrorHandler
+import io.github.aleksandersh.mysocialnetworkphotos.data.network.api.exception.AuthenticationException
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.HttpClient
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.exception.MissingSessionException
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.exception.ResponseParsingException
@@ -42,7 +43,7 @@ class FriendsHttpDatasource(
 
         return httpClient.makeRequest(HttpClient.METHOD_GET, HOST + FRIENDS_GET_METHOD, parameters)
             .let(::toJson)
-            .let(responseErrorHandler::checkForError)
+            .let(::checkForError)
             .let(::parseFriendsJson)
             .let {
                 val contentFinished = (offset + count) >= it.second
@@ -63,6 +64,15 @@ class FriendsHttpDatasource(
                 "Error occurred while parsing json",
                 exception
             )
+        }
+    }
+
+    private fun checkForError(json: JSONObject): JSONObject {
+        return try {
+            responseErrorHandler.checkForError(json)
+        } catch (exception: AuthenticationException) {
+            sessionHolder.invalidateSession()
+            throw exception
         }
     }
 

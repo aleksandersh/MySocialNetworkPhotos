@@ -3,6 +3,8 @@ package io.github.aleksandersh.mysocialnetworkphotos.presentation.content
 import android.support.annotation.StringRes
 import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
+import io.github.aleksandersh.mysocialnetworkphotos.domain.model.SessionStatus
+import io.github.aleksandersh.mysocialnetworkphotos.domain.model.SessionStatusSubscriber
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.SessionInteractor
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.ZeroScreenData
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
@@ -15,19 +17,32 @@ class ContentPresenter(
     private val resourceManager: ResourceManager,
     private val schedulersProvider: SchedulersProvider,
     private val sessionInteractor: SessionInteractor
-) : Presenter {
+) : Presenter, SessionStatusSubscriber {
 
     val viewState: ContentViewState = ContentViewState()
 
+    private var initialized = false
     private var sessionChecked = false
     private var sessionCheckTask: TaskSession? = null
 
     override fun onDestroy() {
         sessionCheckTask?.cancel()
         Tree.applicationComponent.contentComponent.release(ContentView.TAG)
+        sessionInteractor.unsubscribeSessionStatus(this)
+    }
+
+    override fun handleSessionStatus(status: SessionStatus) {
+        if (status == SessionStatus.FINISHED) {
+            viewState.screen.set(Screen.AUTHORIZATION)
+        }
     }
 
     fun onActivityCreated() {
+        if (!initialized) {
+            initialized = true
+            sessionInteractor.subscribeSessionStatus(this)
+        }
+
         if (!sessionChecked) checkSession()
     }
 

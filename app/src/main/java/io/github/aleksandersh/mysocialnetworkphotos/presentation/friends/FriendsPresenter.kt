@@ -6,6 +6,7 @@ import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.Friend
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.FriendsInteractor
 import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.PhotoInteractor
+import io.github.aleksandersh.mysocialnetworkphotos.domain.usecase.SessionInteractor
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.AdapterNotifier
 import io.github.aleksandersh.mysocialnetworkphotos.presentation.friends.model.*
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
@@ -22,7 +23,8 @@ class FriendsPresenter(
     private val resourceManager: ResourceManager,
     private val schedulersProvider: SchedulersProvider,
     private val friendsInteractor: FriendsInteractor,
-    private val photoInteractor: PhotoInteractor
+    private val photoInteractor: PhotoInteractor,
+    private val sessionInteractor: SessionInteractor
 ) : Presenter {
 
     companion object {
@@ -39,6 +41,7 @@ class FriendsPresenter(
     private var loading = false
     private var contentFinished = false
     private var loadFriendsTask: TaskSession? = null
+    private var logoutTask: TaskSession? = null
     private val loadPhotoTasks: TasksBuffer = TasksBuffer(PHOTO_LOADING_TASKS_MAX_COUNT)
 
     override fun onDestroy() {
@@ -48,6 +51,7 @@ class FriendsPresenter(
             .release(FriendsView.TAG)
         loadFriendsTask?.cancel()
         loadPhotoTasks.cancel()
+        logoutTask?.cancel()
     }
 
     fun onViewCreated() {
@@ -125,6 +129,15 @@ class FriendsPresenter(
             .putInBuffer(loadPhotoTasks) // TODO: хотя это не решит проблему с отменой загрузки
         // картинки, она все равно скачается до конца, но результат передан не будет.
         // Может быть запускать каждую загрузку на отдельно потоке и при отмене грохать его?
+    }
+
+    fun onClickExitFromApp() {
+        if (logoutTask == null) {
+            logoutTask = AsyncTask
+                .firstRun(schedulersProvider.backgroundThread) { sessionInteractor.logOut() }
+                .anywayRun(schedulersProvider.mainThread) { logoutTask = null }
+                .start()
+        }
     }
 
     private fun nextPageLoadingError(error: Throwable) {
