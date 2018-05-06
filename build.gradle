@@ -1,6 +1,6 @@
 buildscript {
-    ext.kotlin_version = '1.2.31'
-    ext.gradle_version = '3.1.1'
+    ext.kotlin_version = '1.2.41'
+    ext.gradle_version = '3.1.2'
     repositories {
         google()
         jcenter()
@@ -24,7 +24,7 @@ allprojects {
             junit            : '4.12',
             tests_runner     : '1.0.1',
             espresso         : '3.0.1',
-            mockito          : '2.15.0',
+            mockito          : '2.18.3',
             mockito_kotlin   : '1.5.0'
     ]
 }

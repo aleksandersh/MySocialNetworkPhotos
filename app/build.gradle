@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "io.github.aleksandersh.myvkphotos"
@@ -15,10 +16,19 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
+        }
+
+        release {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -28,7 +38,7 @@ dependencies {
     implementation project(':simplemvp')
     implementation project(':simpleasync')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 
     implementation "com.android.support:support-v4:$versions.support"
     implementation "com.android.support:appcompat-v7:$versions.support"
@@ -37,6 +47,9 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
 
     testImplementation "junit:junit:$versions.junit"
+    testImplementation "org.mockito:mockito-core:$versions.mockito"
+    testImplementation "com.nhaarman:mockito-kotlin:$versions.mockito_kotlin"
+
     androidTestImplementation "com.android.support.test:runner:$versions.tests_runner"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$versions.espresso"
 }

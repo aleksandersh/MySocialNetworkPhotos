@@ -6,4 +6,10 @@
         <item name="colorAccent">@color/blueDark</item>
     </style>
 
+    <!--Просотр фотографии "на весь экран"?-->
+    <style name="AppTheme.Fullscreen" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
 </resources>

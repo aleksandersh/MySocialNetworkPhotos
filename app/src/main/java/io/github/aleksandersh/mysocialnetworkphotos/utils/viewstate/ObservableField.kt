@@ -4,23 +4,24 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.OnLifecycleEvent
+import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.strategy.ObservableFieldStrategy
+import io.github.aleksandersh.mysocialnetworkphotos.utils.viewstate.strategy.SimpleStrategy
 
-class ObservableField<T> {
+class ObservableField<T>(private val strategy: ObservableFieldStrategy<T> = SimpleStrategy()) {
 
     private val subscriptions = ArrayList<FieldObserver<T>>()
 
     private var currentValue: T? = null
 
     fun set(value: T) {
-        currentValue = value
-        subscriptions.forEach { it.callback(value) }
+        currentValue = strategy.onValueChanged(currentValue, value, subscriptions)
     }
 
     fun subscribe(lifecycleOwner: LifecycleOwner, callback: (T) -> Unit) {
         val observer = FieldObserver(lifecycleOwner, callback)
         lifecycleOwner.lifecycle.addObserver(observer)
         subscriptions.add(observer)
-        currentValue?.let(callback)
+        currentValue = strategy.onSubscribe(currentValue, observer, subscriptions)
     }
 
     private fun unsubscribe(fieldObserver: FieldObserver<*>) {

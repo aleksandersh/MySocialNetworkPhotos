@@ -5,5 +5,8 @@ package io.github.aleksandersh.mysocialnetworkphotos.presentation.signin
  */
 interface SignInView {
 
-    fun showLoading(loading: Boolean)
+    companion object {
+
+        const val TAG = "SignInView"
+    }
 }

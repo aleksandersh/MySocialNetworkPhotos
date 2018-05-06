@@ -8,4 +8,5 @@
     <color name="blue">#5181b8</color>
     <color name="blueSoft">#5b88bd</color>
     <color name="blueDark">#224b7a</color>
+    <color name="blackTransparent">#CC000000</color>
 </resources>

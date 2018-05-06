@@ -1,11 +1,18 @@
 <resources>
     <string name="app_name">My Social network photos</string>
 
+    <string name="all_loading_default_title">Wait a second</string>
+    <string name="all_loading_default_subtitle">Loading in progress</string>
+    <string name="all_error_default_title">Sorry&#8230;</string>
+    <string name="all_error_default_subtitle">An error occurred, try again later</string>
+
     <string name="activity_authorization_toolbar_title">Authorization</string>
 
-    <string name="fragment_sign_in_title">Sign in Social network</string>
-    <string name="fragment_sign_in_login_button">Log in</string>
-    <string name="fragment_sign_in_login_hint">Username or email address</string>
-    <string name="fragment_sign_in_password_hint">Password</string>
+    <string name="layout_zero_screen_button_title">Retry</string>
+
+    <string name="fragment_photo_title">Photo</string>
+    <string name="item_friends_error_retry">Retry</string>
+    <string name="item_friends_error_default_description">Ops! An error occurred</string>
+    <string name="friends_toolbar_menu_exit">Exit from app</string>
 
 </resources>
