@@ -13,5 +13,6 @@
     <string name="fragment_photo_title">Photo</string>
     <string name="item_friends_error_retry">Retry</string>
     <string name="item_friends_error_default_description">Ops! An error occurred</string>
+    <string name="friends_toolbar_menu_exit">Exit from app</string>
 
 </resources>

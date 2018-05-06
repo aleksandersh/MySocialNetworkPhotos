@@ -59,9 +59,11 @@ class ContentActivity : AppCompatActivity(), ContentView {
     }
 
     private fun showAuthorizationScreen() {
-        val intent = Intent(applicationContext, AuthorizationActivity::class.java)
-        startActivity(intent)
-        finish()
+        if (!isFinishing) {
+            val intent = Intent(applicationContext, AuthorizationActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun showFriendsScreen() {

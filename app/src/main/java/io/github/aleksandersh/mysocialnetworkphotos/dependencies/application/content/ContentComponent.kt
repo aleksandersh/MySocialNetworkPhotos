@@ -26,18 +26,21 @@ class ContentComponent(val applicationComponent: ApplicationComponent) {
         PhotoInteractor(photoRepository)
     }
 
-    private val sessionInteractor: SessionInteractor by lazy {
+    val sessionInteractor: SessionInteractor by lazy {
         SessionInteractor(sessionRepository)
     }
 
     private val sessionRepository: SessionRepository by lazy {
-        SessionRepositoryImpl(sessionHttpDatasource)
+        SessionRepositoryImpl(
+            sessionHttpDatasource,
+            applicationComponent.sessionHolder,
+            photoRepository
+        )
     }
 
     private val sessionHttpDatasource: SessionHttpDatasource by lazy {
         SessionHttpDatasource(
-            applicationComponent.httpClient,
-            applicationComponent.responseErrorHandler,
+            applicationComponent.apiContentHttpClient,
             applicationComponent.sessionHolder
         )
     }

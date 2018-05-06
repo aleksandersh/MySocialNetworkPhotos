@@ -27,10 +27,6 @@ class PhotoComponent(val contentComponent: ContentComponent) {
     }
 
     private val photoInfoHttpDatasource: PhotoInfoHttpDatasource by lazy {
-        PhotoInfoHttpDatasource(
-            contentComponent.applicationComponent.httpClient,
-            contentComponent.applicationComponent.responseErrorHandler,
-            contentComponent.applicationComponent.sessionHolder
-        )
+        PhotoInfoHttpDatasource(contentComponent.applicationComponent.apiContentHttpClient)
     }
 }

@@ -1,7 +1,7 @@
 package io.github.aleksandersh.mysocialnetworkphotos.data.repository
 
-import android.net.Uri
 import io.github.aleksandersh.mysocialnetworkphotos.data.BuildConfig
+import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.UrlBuilder
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.AuthorizationProperties
 import io.github.aleksandersh.mysocialnetworkphotos.domain.model.UserSession
 import io.github.aleksandersh.mysocialnetworkphotos.domain.repository.AuthorizationRepository
@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
 class AuthorizationRepositoryImpl(
+    private val urlBuilder: UrlBuilder,
     private val sessionHolder: SessionHolder
 ) : AuthorizationRepository {
 
@@ -18,13 +19,22 @@ class AuthorizationRepositoryImpl(
         private const val HOST = BuildConfig.API_AUTH_HOST
         private const val AUTH_PAGE = "authorize"
         private const val BLANK_PAGE = "blank.html"
+        private const val PATH_AUTH = HOST + AUTH_PAGE
+        private const val PATH_BLANK = HOST + BLANK_PAGE
+
+        private const val PARAM_CLIENT_ID = "client_id"
+        private const val PARAM_DISPLAY = "display"
+        private const val PARAM_RESPONSE_TYPE = "response_type"
+        private const val PARAM_SCOPE = "scope"
+        private const val PARAM_REDIRECT_URL = "redirect_uri"
+        private const val PARAM_STATE = "state"
+        private const val PARAM_API_VERSION = "v"
 
         private const val CLIENT_ID = BuildConfig.API_CLIENT_ID
         private const val DISPLAY = "mobile"
         private const val API_VERSION = BuildConfig.API_VERSION
         private const val RESPONSE_TYPE = "token"
         private const val STATE = "some_state"
-
         private const val SCOPE_FRIENDS = 2
         private const val SCOPE_PHOTOS = 4
         private const val SCOPE = SCOPE_FRIENDS or SCOPE_PHOTOS
@@ -77,25 +87,22 @@ class AuthorizationRepositoryImpl(
             clientId = CLIENT_ID,
             apiVersion = API_VERSION,
             state = STATE,
-            authorizationUri = "$HOST$AUTH_PAGE",
-            redirectUri = "$HOST$BLANK_PAGE",
+            authorizationUri = PATH_AUTH,
+            redirectUri = PATH_BLANK,
             authorizationQuery = getAuthorizationQuery()
         )
     }
 
     private fun getAuthorizationQuery(): String {
-        val builder = Uri.Builder()
-            .encodedPath(HOST)
-            .appendPath(AUTH_PAGE)
-            .appendQueryParameter("client_id", CLIENT_ID)
-            .appendQueryParameter("display", DISPLAY)
-            .appendQueryParameter("v", API_VERSION)
-            .appendQueryParameter("response_type", RESPONSE_TYPE)
-            .appendQueryParameter("scope", SCOPE.toString(2))
-            .appendQueryParameter("redirect_uri", HOST + BLANK_PAGE)
-            .appendQueryParameter("state", STATE)
-
-        val uri = builder.build()
-        return uri.toString()
+        val parameters = mapOf(
+            PARAM_CLIENT_ID to CLIENT_ID,
+            PARAM_DISPLAY to DISPLAY,
+            PARAM_RESPONSE_TYPE to RESPONSE_TYPE,
+            PARAM_SCOPE to SCOPE.toString(2),
+            PARAM_REDIRECT_URL to PATH_BLANK,
+            PARAM_STATE to STATE,
+            PARAM_API_VERSION to API_VERSION
+        )
+        return urlBuilder.getUrl(PATH_AUTH, parameters)
     }
 }

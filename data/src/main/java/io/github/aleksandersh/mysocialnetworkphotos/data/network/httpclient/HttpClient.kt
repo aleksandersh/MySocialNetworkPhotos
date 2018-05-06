@@ -6,6 +6,7 @@ interface HttpClient {
 
     companion object {
 
+        const val TAG = "HttpClient"
         const val METHOD_GET = "GET"
         const val METHOD_POST = "POST"
     }

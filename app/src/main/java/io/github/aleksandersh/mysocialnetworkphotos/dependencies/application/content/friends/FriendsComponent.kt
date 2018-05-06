@@ -14,7 +14,8 @@ class FriendsComponent(val contentComponent: ContentComponent) {
             contentComponent.applicationComponent.resourceManager,
             contentComponent.applicationComponent.schedulersProvider,
             friendsInteractor,
-            contentComponent.photoInteractor
+            contentComponent.photoInteractor,
+            contentComponent.sessionInteractor
         )
     }
 
@@ -27,10 +28,6 @@ class FriendsComponent(val contentComponent: ContentComponent) {
     }
 
     private val friendsHttpDatasource: FriendsHttpDatasource by lazy {
-        FriendsHttpDatasource(
-            contentComponent.applicationComponent.httpClient,
-            contentComponent.applicationComponent.responseErrorHandler,
-            contentComponent.applicationComponent.sessionHolder
-        )
+        FriendsHttpDatasource(contentComponent.applicationComponent.apiContentHttpClient)
     }
 }

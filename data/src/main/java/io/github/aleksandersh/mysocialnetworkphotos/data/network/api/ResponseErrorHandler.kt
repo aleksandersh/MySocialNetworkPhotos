@@ -9,6 +9,7 @@ class ResponseErrorHandler {
 
     companion object {
 
+        private const val CODE_AUTHORIZATION_FAILED = 5
         private const val CODE_PERMISSION_DENIED = 7
         private const val CODE_ACCESS_DENIED = 15
         private const val CODE_PAGE_BLOCKED = 18
@@ -23,6 +24,7 @@ class ResponseErrorHandler {
         when (errorCode) {
             CODE_PERMISSION_DENIED,
             CODE_ACCESS_DENIED -> throw PermissionDeniedException(errorCode, errorMessage)
+            CODE_AUTHORIZATION_FAILED,
             CODE_PAGE_BLOCKED -> throw AuthenticationException(errorCode, errorMessage)
         }
 

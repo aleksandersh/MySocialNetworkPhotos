@@ -68,9 +68,11 @@ class SignInFragment : Fragment(), SignInView {
     }
 
     private fun showContentActivity(show: Boolean) {
-        if (show) {
+        val activity = requireActivity()
+        if (show && !activity.isFinishing) {
             val newIntent = Intent(requireContext(), ContentActivity::class.java)
             startActivity(newIntent)
+            activity.finish()
         }
     }
 
