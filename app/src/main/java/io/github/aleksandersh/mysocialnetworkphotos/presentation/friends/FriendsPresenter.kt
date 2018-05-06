@@ -133,6 +133,8 @@ class FriendsPresenter(
 
     fun onClickExitFromApp() {
         if (logoutTask == null) {
+            // TODO: Так просто не выйдет, при попадании на страницу авторизации VK API
+            // сделает редирект и автоматически проведет авторизацию.
             logoutTask = AsyncTask
                 .firstRun(schedulersProvider.backgroundThread) { sessionInteractor.logOut() }
                 .anywayRun(schedulersProvider.mainThread) { logoutTask = null }

@@ -6,6 +6,7 @@ import io.github.aleksandersh.mysocialnetworkphotos.data.network.api.ApiContentH
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.api.ResponseErrorHandler
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.CoreHttpClient
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.HttpClient
+import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.UrlBuilder
 import io.github.aleksandersh.mysocialnetworkphotos.data.repository.SessionHolder
 import io.github.aleksandersh.mysocialnetworkphotos.data.repository.SessionHolderImpl
 import io.github.aleksandersh.mysocialnetworkphotos.data.storage.SessionStorage
@@ -25,11 +26,12 @@ class ApplicationComponent(val context: Context) {
     val schedulersProvider: SchedulersProvider by lazy { SchedulersProviderImpl() }
     val presenterProvider: PresenterProvider by lazy { PresenterProvider() }
     val sessionHolder: SessionHolder by lazy { SessionHolderImpl(sessionStorage) }
-    val httpClient: HttpClient by lazy { CoreHttpClient() }
+    val httpClient: HttpClient by lazy { CoreHttpClient(urlBuilder) }
     val responseErrorHandler: ResponseErrorHandler by lazy { ResponseErrorHandler() }
     val apiContentHttpClient: ApiContentHttpClient by lazy {
         ApiContentHttpClient(httpClient, responseErrorHandler, sessionHolder)
     }
+    val urlBuilder: UrlBuilder by lazy { UrlBuilder() }
 
     private val sessionStorage: SessionStorage by lazy { SessionStorage(sessionPreferences) }
     private val sessionPreferences: SharedPreferences by lazy {

@@ -21,6 +21,9 @@ class AuthorizationComponent(val applicationComponent: ApplicationComponent) {
     }
 
     private val authorizationRepository: AuthorizationRepository by lazy {
-        AuthorizationRepositoryImpl(applicationComponent.sessionHolder)
+        AuthorizationRepositoryImpl(
+            applicationComponent.urlBuilder,
+            applicationComponent.sessionHolder
+        )
     }
 }
