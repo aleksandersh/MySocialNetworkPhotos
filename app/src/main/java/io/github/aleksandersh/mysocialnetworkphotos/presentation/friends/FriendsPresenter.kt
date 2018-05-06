@@ -113,6 +113,9 @@ class FriendsPresenter(
 
     fun loadPhoto(observableField: ObservableField<PhotoResult>, url: String) {
         AsyncTask
+            // TODO: Здесь нельзя использовать background thread, потому что он работает в одном
+            // экземпляре и остальные операции не выполнятся пока не прогрузятся все фотки.
+            // Было бы классно потом сделать Scheduler используя ThreadPool.
             .firstCall(schedulersProvider.backgroundThread) {
                 photoInteractor.loadPhotoPreview(url)
             }

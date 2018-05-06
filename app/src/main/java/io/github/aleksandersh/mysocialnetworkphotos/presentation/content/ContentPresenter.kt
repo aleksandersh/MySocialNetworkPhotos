@@ -1,5 +1,6 @@
 package io.github.aleksandersh.mysocialnetworkphotos.presentation.content
 
+import android.os.Handler
 import android.support.annotation.StringRes
 import io.github.aleksandersh.mysocialnetworkphotos.R
 import io.github.aleksandersh.mysocialnetworkphotos.dependencies.Tree
@@ -21,6 +22,8 @@ class ContentPresenter(
 
     val viewState: ContentViewState = ContentViewState()
 
+    private val uiHandler = Handler()
+
     private var initialized = false
     private var sessionChecked = false
     private var sessionCheckTask: TaskSession? = null
@@ -32,8 +35,10 @@ class ContentPresenter(
     }
 
     override fun handleSessionStatus(status: SessionStatus) {
-        if (status == SessionStatus.FINISHED) {
-            viewState.screen.set(Screen.AUTHORIZATION)
+        uiHandler.post {
+            if (status == SessionStatus.FINISHED) {
+                viewState.screen.set(Screen.AUTHORIZATION)
+            }
         }
     }
 
