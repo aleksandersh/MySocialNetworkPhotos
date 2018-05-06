@@ -7,14 +7,13 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-class SimpleHttpClient(
+class CoreHttpClient(
     private val connectTimeout: Int = DEFAULT_CONNECT_TIMEOUT,
     private val readTimeout: Int = DEFAULT_READ_TIMEOUT
 ) : HttpClient {
 
     companion object {
 
-        private const val TAG = "SimpleHttpClient"
         private const val DEFAULT_CONNECT_TIMEOUT = 3_000
         private const val DEFAULT_READ_TIMEOUT = 3_000
     }
@@ -29,7 +28,7 @@ class SimpleHttpClient(
     }
 
     override fun makeRequest(url: URL, method: String): ByteArray {
-        Log.d(TAG, "request: $method / $url")
+        Log.d(HttpClient.TAG, "request: $method / $url")
         val connection = url.openConnection() as HttpURLConnection
         try {
             connection.requestMethod = method
@@ -41,13 +40,13 @@ class SimpleHttpClient(
             val message = connection.responseMessage
             if (code != HttpURLConnection.HTTP_OK) {
                 Log.d(
-                    TAG,
+                    HttpClient.TAG,
                     """error: $method $code / $url
                     $message"""
                 )
                 throw IOException()
             }
-            Log.d(TAG, "success: $method $code / $url")
+            Log.d(HttpClient.TAG, "success: $method $code / $url")
 
             return connection.inputStream.use(::readStream)
         } finally {

@@ -2,12 +2,13 @@ package io.github.aleksandersh.mysocialnetworkphotos.dependencies.application
 
 import android.content.Context
 import android.content.SharedPreferences
+import io.github.aleksandersh.mysocialnetworkphotos.data.network.api.ApiContentHttpClient
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.api.ResponseErrorHandler
+import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.CoreHttpClient
 import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.HttpClient
-import io.github.aleksandersh.mysocialnetworkphotos.data.network.httpclient.SimpleHttpClient
+import io.github.aleksandersh.mysocialnetworkphotos.data.repository.SessionHolder
 import io.github.aleksandersh.mysocialnetworkphotos.data.repository.SessionHolderImpl
 import io.github.aleksandersh.mysocialnetworkphotos.data.storage.SessionStorage
-import io.github.aleksandersh.mysocialnetworkphotos.data.repository.SessionHolder
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
 import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProvider
 import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProviderImpl
@@ -24,8 +25,11 @@ class ApplicationComponent(val context: Context) {
     val schedulersProvider: SchedulersProvider by lazy { SchedulersProviderImpl() }
     val presenterProvider: PresenterProvider by lazy { PresenterProvider() }
     val sessionHolder: SessionHolder by lazy { SessionHolderImpl(sessionStorage) }
-    val httpClient: HttpClient by lazy { SimpleHttpClient() }
+    val httpClient: HttpClient by lazy { CoreHttpClient() }
     val responseErrorHandler: ResponseErrorHandler by lazy { ResponseErrorHandler() }
+    val apiContentHttpClient: ApiContentHttpClient by lazy {
+        ApiContentHttpClient(httpClient, responseErrorHandler, sessionHolder)
+    }
 
     private val sessionStorage: SessionStorage by lazy { SessionStorage(sessionPreferences) }
     private val sessionPreferences: SharedPreferences by lazy {
