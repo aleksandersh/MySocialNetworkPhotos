@@ -5,9 +5,7 @@ import io.github.aleksandersh.simpleasync.scheduler.Scheduler
 
 class TestSchedulersProvider : SchedulersProvider {
 
-    override val mainThread: Scheduler
-        get() = Schedulers.currentThread
-
-    override val backgroundThread: Scheduler
-        get() = Schedulers.currentThread
+    override val mainThread: Scheduler = Schedulers.currentThread
+    override val ioThread: Scheduler = Schedulers.currentThread
+    override val computationThread: Scheduler = Schedulers.currentThread
 }
