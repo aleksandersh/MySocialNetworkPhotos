@@ -57,7 +57,7 @@ class ContentPresenter(
 
     private fun checkSession() {
         showLoading()
-        sessionCheckTask = AsyncTask.firstCall(schedulersProvider.backgroundThread) {
+        sessionCheckTask = AsyncTask.firstCall(schedulersProvider.ioThread) {
             sessionInteractor.checkSessionExists()
         }
             .switchScheduler(schedulersProvider.mainThread)
