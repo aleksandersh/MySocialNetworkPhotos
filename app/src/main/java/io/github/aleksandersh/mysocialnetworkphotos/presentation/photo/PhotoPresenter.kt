@@ -49,7 +49,7 @@ class PhotoPresenter(
     private fun loadPreview(url: String) {
         loadPreviewTask?.cancel()
         loadPreviewTask = AsyncTask
-            .firstCall(schedulersProvider.backgroundThread) {
+            .firstCall(schedulersProvider.ioThread) {
                 val photo = photoInteractor.loadPhotoPreview(url)
                 BitmapFactory.decodeByteArray(photo, 0, photo.size)
             }
@@ -72,7 +72,7 @@ class PhotoPresenter(
     private fun loadPhoto(url: String) {
         loadPhotoTask?.cancel()
         loadPhotoTask = AsyncTask
-            .firstCall(schedulersProvider.backgroundThread) {
+            .firstCall(schedulersProvider.ioThread) {
                 val photo = photoInteractor.loadPhoto(url)
                 BitmapFactory.decodeByteArray(photo, 0, photo.size)
             }
@@ -93,7 +93,7 @@ class PhotoPresenter(
     private fun loadPhotoInfo(photoId: String) {
         loadPhotoInfoTask?.cancel()
         loadPhotoInfoTask = AsyncTask
-            .firstCall(schedulersProvider.backgroundThread) {
+            .firstCall(schedulersProvider.ioThread) {
                 photoInfoInteractor.getPhotoInfo(photoId)
             }
             .switchScheduler(schedulersProvider.mainThread)

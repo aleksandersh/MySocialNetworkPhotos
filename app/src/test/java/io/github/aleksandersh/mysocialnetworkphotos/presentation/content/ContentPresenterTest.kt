@@ -9,6 +9,8 @@ import io.github.aleksandersh.mysocialnetworkphotos.presentation.base.model.Zero
 import io.github.aleksandersh.mysocialnetworkphotos.utils.ResourceManager
 import io.github.aleksandersh.mysocialnetworkphotos.utils.SchedulersProvider
 import io.github.aleksandersh.mysocialnetworkphotos.utils.TestSchedulersProvider
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -39,8 +41,6 @@ class ContentPresenterTest {
 
     @Test
     fun checkSession_sessionExists() {
-        val localPresenter =
-            ContentPresenter(resourceManager, schedulersProvider, sessionInteractor)
         val stringRes = "stringRes"
         val loadingScreen = ZeroScreenData(stringRes, stringRes, false, true)
 
@@ -50,23 +50,21 @@ class ContentPresenterTest {
 
         whenever(sessionInteractor.checkSessionExists()).thenReturn(true)
         whenever(lifecycleOwner.lifecycle).thenReturn(lifecycle)
-        whenever(resourceManager.getString(any())).thenReturn("anyString")
+        whenever(resourceManager.getString(any())).thenReturn("stringRes")
 
-        localPresenter.viewState.screen.subscribe(lifecycleOwner) { screen = it }
-        localPresenter.viewState.zeroScreenData.subscribe(lifecycleOwner) { zeroScreenData = it }
-        localPresenter.viewState.contentScreen.subscribe(lifecycleOwner) { contentScreen = it }
+        presenter.viewState.screen.subscribe(lifecycleOwner) { screen = it }
+        presenter.viewState.zeroScreenData.subscribe(lifecycleOwner) { zeroScreenData = it }
+        presenter.viewState.contentScreen.subscribe(lifecycleOwner) { contentScreen = it }
 
-        localPresenter.onActivityCreated()
+        presenter.onActivityCreated()
 
-        assert(zeroScreenData == loadingScreen)
-        assert(screen == Screen.FRIENDS)
-        assert(contentScreen == true)
+        assertEquals(loadingScreen, zeroScreenData)
+        assertEquals(Screen.FRIENDS, screen)
+        assertEquals(true, contentScreen)
     }
 
     @Test
     fun checkSession_sessionNotExists() {
-        val localPresenter =
-            ContentPresenter(resourceManager, schedulersProvider, sessionInteractor)
         val stringRes = "stringRes"
         val loadingScreen = ZeroScreenData(stringRes, stringRes, false, true)
 
@@ -75,37 +73,35 @@ class ContentPresenterTest {
 
         whenever(sessionInteractor.checkSessionExists()).thenReturn(false)
         whenever(lifecycleOwner.lifecycle).thenReturn(lifecycle)
-        whenever(resourceManager.getString(any())).thenReturn("anyString")
+        whenever(resourceManager.getString(any())).thenReturn("stringRes")
 
-        localPresenter.viewState.screen.subscribe(lifecycleOwner) { screen = it }
-        localPresenter.viewState.zeroScreenData.subscribe(lifecycleOwner) { zeroScreenData = it }
+        presenter.viewState.screen.subscribe(lifecycleOwner) { screen = it }
+        presenter.viewState.zeroScreenData.subscribe(lifecycleOwner) { zeroScreenData = it }
 
-        localPresenter.onActivityCreated()
+        presenter.onActivityCreated()
 
-        assert(zeroScreenData == loadingScreen)
-        assert(screen == Screen.AUTHORIZATION)
+        assertEquals(loadingScreen, zeroScreenData)
+        assertEquals(Screen.AUTHORIZATION, screen)
     }
 
     @Test
     fun checkSession_error() {
-        val localPresenter =
-            ContentPresenter(resourceManager, schedulersProvider, sessionInteractor)
         val stringRes = "stringRes"
         val errorScreen = ZeroScreenData(stringRes, stringRes, true, false)
 
         var zeroScreenData: ZeroScreenData? = null
         var screen: Screen? = null
 
-        whenever(sessionInteractor.checkSessionExists()).thenReturn(false)
+        whenever(sessionInteractor.checkSessionExists()).thenThrow(RuntimeException())
         whenever(lifecycleOwner.lifecycle).thenReturn(lifecycle)
-        whenever(resourceManager.getString(any())).thenReturn("anyString")
+        whenever(resourceManager.getString(any())).thenReturn("stringRes")
 
-        localPresenter.viewState.screen.subscribe(lifecycleOwner) { screen = it }
-        localPresenter.viewState.zeroScreenData.subscribe(lifecycleOwner) { zeroScreenData = it }
+        presenter.viewState.screen.subscribe(lifecycleOwner) { screen = it }
+        presenter.viewState.zeroScreenData.subscribe(lifecycleOwner) { zeroScreenData = it }
 
-        localPresenter.onActivityCreated()
+        presenter.onActivityCreated()
 
-        assert(zeroScreenData == errorScreen)
-        assert(screen == null)
+        assertEquals(errorScreen, zeroScreenData)
+        assertNull(screen)
     }
 }

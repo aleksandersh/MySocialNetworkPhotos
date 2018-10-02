@@ -5,5 +5,6 @@ import io.github.aleksandersh.simpleasync.scheduler.Scheduler
 interface SchedulersProvider {
 
     val mainThread: Scheduler
-    val backgroundThread: Scheduler
+    val ioThread: Scheduler
+    val computationThread: Scheduler
 }

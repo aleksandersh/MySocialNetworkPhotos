@@ -39,7 +39,7 @@ class SignInPresenter(
     fun onUrlLoading(url: String): Boolean {
         val handle = authorizationInteractor.checkHandling(url)
         if (handle) {
-            authorizationTask = AsyncTask.firstCall(schedulersProvider.backgroundThread) {
+            authorizationTask = AsyncTask.firstCall(schedulersProvider.ioThread) {
                 authorizationInteractor.processUrl(url)
             }
                 .thenProcess(schedulersProvider.mainThread, ::onUrlProcessed)

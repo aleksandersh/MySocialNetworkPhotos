@@ -76,7 +76,7 @@ class FriendsPresenter(
         loading = true
         loadFriendsTask?.cancel()
         loadFriendsTask = AsyncTask
-            .firstCall(schedulersProvider.backgroundThread) {
+            .firstCall(schedulersProvider.ioThread) {
                 val result = friendsInteractor.getFriends(currentPage)
                 val friends = result.friends.map { ItemFriend(convertFriendToVm(it)) }
                 val contentFinished = result.contentFinished
@@ -113,10 +113,7 @@ class FriendsPresenter(
 
     fun loadPhoto(observableField: ObservableField<PhotoResult>, url: String) {
         AsyncTask
-            // TODO: Здесь нельзя использовать background thread, потому что он работает в одном
-            // экземпляре и остальные операции не выполнятся пока не прогрузятся все фотки.
-            // Было бы классно потом сделать Scheduler используя ThreadPool.
-            .firstCall(schedulersProvider.backgroundThread) {
+            .firstCall(schedulersProvider.ioThread) {
                 photoInteractor.loadPhotoPreview(url)
             }
             .thenProcess {
@@ -131,7 +128,6 @@ class FriendsPresenter(
             .start()
             .putInBuffer(loadPhotoTasks) // TODO: хотя это не решит проблему с отменой загрузки
         // картинки, она все равно скачается до конца, но результат передан не будет.
-        // Может быть запускать каждую загрузку на отдельно потоке и при отмене грохать его?
     }
 
     fun onClickExitFromApp() {
@@ -139,7 +135,7 @@ class FriendsPresenter(
             // TODO: Так просто не выйдет, при попадании на страницу авторизации VK API
             // сделает редирект и автоматически проведет авторизацию.
             logoutTask = AsyncTask
-                .firstRun(schedulersProvider.backgroundThread) { sessionInteractor.logOut() }
+                .firstRun(schedulersProvider.ioThread) { sessionInteractor.logOut() }
                 .anywayRun(schedulersProvider.mainThread) { logoutTask = null }
                 .start()
         }
